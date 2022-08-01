@@ -56,6 +56,15 @@ describe.only(Endpoints.ARTICLE_BY_ID_END, () => {
         );
       });
   });
+  test("Get request with out of range ID returns an http 404", () => {
+    return request(app).get("/api/articles/6767").expect(404); 
+  });
+  test("Get request with out of range ID returns an error object", () => {
+    return request(app).get("/api/articles/6767")
+    .then(({body : err}) => {
+        expect(err.msg).toBe("Error 404: No articles found for article_id 6767.")
+    });
+  });
 });
 
 //close connection to database

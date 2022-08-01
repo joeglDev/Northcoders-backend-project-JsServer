@@ -8,10 +8,11 @@ module.exports.getAllTopics = (req, res) => {
   });
 };
 
-module.exports.getArticleById = (req, res) => {
+module.exports.getArticleById = ( req, res, next) => {
   const id = req.params.article_id;
   selectArticleById(id).then((article) => {
     const responseBody = { article };
     res.status(200).send(responseBody);
-  });
+  })
+  .catch(next)
 };
