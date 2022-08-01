@@ -9,5 +9,5 @@ To set up this project's environment:
 4. Run the following scripts as defined in the ``package.json`` file using the terminal command ``npm run script_name_to_run_here``.
 - ``prepare`` - Installs the husky npm package.
 - ``setup-dbs`` - Drops the psql database if it exists and creates a new database. 
-- ``seed`` - Runs the database seedfile to seed a new database.
+- ``seed`` - Runs the database seed file to seed a new database.
 - ``test`` - Runs the code tests as defined in the ``__tests__`` directory using jest.
