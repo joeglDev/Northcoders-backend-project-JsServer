@@ -33,6 +33,32 @@ describe(Endpoints.ALL_TOPICS_END, () => {
   });
 });
 
+//tests for GET /api/articles/:article_id
+describe.only(Endpoints.ARTICLE_BY_ID_END, () => {
+  test("GET request returns a status code of 200", () => {
+    return request(app).get("/api/articles/3").expect(200);
+  });
+  test("GET request returns an article object on key of article", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .then(({ body: { article } }) => {
+        article = article[0];
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+  });
+});
+
+//close connection to database
 afterAll(() => {
   return db.end();
 });
