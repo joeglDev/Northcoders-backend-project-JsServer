@@ -10,3 +10,12 @@ module.exports.handleCustomErrors = (err, req, res, next) => {
     next(err);
   }
 };
+
+module.exports.handlePsqlErrors = (err, req, res, next) => {
+  if (err.code === "22P02") {
+    const responseBody = { status: 400, msg: "Error 400: Not a valid id." };
+    res.status(400).send(responseBody);
+  } else {
+    next(err);
+  }
+};
