@@ -12,7 +12,7 @@ module.exports = app;
 app.get(Endpoints.ALL_TOPICS_END, getAllTopics);
 
 //Error handling
-app.get('*', handleInvalidPaths);
+app.use('*', handleInvalidPaths);
 
 // //Listener
 // app.listen(port, () => {

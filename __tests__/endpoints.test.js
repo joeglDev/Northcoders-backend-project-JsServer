@@ -22,13 +22,13 @@ describe(Endpoints.ALL_TOPICS_END, () => {
       });
   });
   test("invalid path returns a http status code of 404", () => {
-    return request(app).get(Endpoints.INVALID_END).expect(404);
+    return request(app).get(Endpoints.INVALID_END).expect(400);
   });
   test("returns a error message object for an invalid endpoint", () => {
     return request(app)
       .get(Endpoints.INVALID_END)
       .then(({ body: response }) => {
-        expect(response.msg).toBe("Error 404: Path invalid.");
+        expect(response.msg).toBe("Error 400: Path invalid.");
       });
   });
 });
