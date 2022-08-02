@@ -34,7 +34,7 @@ describe(Endpoints.ALL_TOPICS_END, () => {
 });
 
 //tests for GET /api/articles/:article_id
-describe.only(Endpoints.ARTICLE_BY_ID_END, () => {
+describe(Endpoints.ARTICLE_BY_ID_END, () => {
   test("GET request returns a status code of 200", () => {
     return request(app).get("/api/articles/3").expect(200);
   });
