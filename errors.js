@@ -4,9 +4,21 @@ module.exports.handleInvalidPaths = (req, res, next) => {
 };
 
 module.exports.handleCustomErrors = (err, req, res, next) => {
-  if (err.status && err.msg) {
+  //404 content not found
+  if (err.status === 404 && err.msg) {
     res.status(404).send(err);
-  } else {
+  } 
+  //400 Bad Request - malformed body
+  else if (err.message === '400-malformed-body' ) {
+const responseBody = {status: 400, msg : "Error 400: Malformed request body."}
+    res.status(400).send(responseBody)
+  }
+  //400 Bad Request - invalid data type
+  else if(err.message === "400-bad-data-type") {
+    const responseBody = {status: 400, msg :  "Error 400: Body has invalid data type."}
+    res.status(400).send(responseBody)
+  }
+  else {
     next(err);
   }
 };

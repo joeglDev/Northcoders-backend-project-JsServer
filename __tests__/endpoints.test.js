@@ -79,6 +79,31 @@ describe(Endpoints.ARTICLE_BY_ID_END, () => {
   });
 });
 
+//tests for Patch /api/articles/:article_id
+describe(Endpoints.ARTICLE_BY_ID_END, () => {
+  test("returns a status code of 201 and a updated article obj for PATCH request", () => {
+    const votes = { inc_votes : -97 };
+    return request(app).patch("/api/articles/3").send(votes).expect(201)
+    .then(({body : response}) => {
+      expect(response.updated_article.votes).toBe(-97);
+    });
+  });
+  test(" returns 400 bad request for a malformed request body", () => {
+    const votes = {};
+    return request(app).patch("/api/articles/3").send(votes).expect(400)
+    .then(({body : response}) => {
+      expect(response.msg).toBe("Error 400: Malformed request body.")
+    })
+  });
+  test(" returns 400 bad request for a request body of wrong data type", () => {
+    const votes = {inc_votes : "1"};
+    return request(app).patch("/api/articles/3").send(votes).expect(400)
+    .then(({body : response}) => {
+      expect(response.msg).toBe("Error 400: Body has invalid data type.")
+    })
+  });
+});
+
 //close connection to database
 afterAll(() => {
   return db.end();
