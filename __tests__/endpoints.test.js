@@ -139,7 +139,7 @@ describe(Endpoints.ALL_USERS_END, () => {
   });
 });
 
-//tests for //tests for GET /api/articles/:article_id
+//tests for GET /api/articles/:article_id
 //close connection to database
 afterAll(() => {
   return db.end();
