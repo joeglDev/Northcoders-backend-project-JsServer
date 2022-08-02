@@ -20,6 +20,15 @@ module.exports.selectArticleById = (id) => {
     });
 };
 
+module.exports.selectNumberOfArticleComments = (id) => {
+  return db.query(
+    "SELECT COUNT(*) AS count FROM comments WHERE article_id = $1;",
+    [id]
+  )
+  .then(({rows}) => {
+    return rows[0].count
+  })
+};
 
 module.exports.updateArticleById = (id, votesToAdd) => {
   return db
@@ -34,10 +43,7 @@ module.exports.updateArticleById = (id, votesToAdd) => {
 };
 
 module.exports.selectAllUsers = () => {
-  return db
-  .query('SELECT * FROM users')
-  .then(({rows : users}) => {
-  return users
-  })
-  };
-  
+  return db.query("SELECT * FROM users").then(({ rows: users }) => {
+    return users;
+  });
+};

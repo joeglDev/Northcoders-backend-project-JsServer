@@ -32,6 +32,14 @@ describe(Endpoints.ALL_TOPICS_END, () => {
   });
 });
 
+//comments are linked by FK article_id
+//func to count comments of same id
+//add this to response bod
+
+//test for 2
+
+//err no comments so [] returned vs comment id invalid or OOR
+
 //tests for GET /api/articles/:article_id
 describe(Endpoints.ARTICLE_BY_ID_END, () => {
   test("GET request returns a status code of 200", () => {
@@ -41,7 +49,6 @@ describe(Endpoints.ARTICLE_BY_ID_END, () => {
     return request(app)
       .get("/api/articles/3")
       .then(({ body: { article } }) => {
-        article = article[0];
         expect(article).toEqual(
           expect.objectContaining({
             article_id: expect.any(Number),
@@ -51,10 +58,17 @@ describe(Endpoints.ARTICLE_BY_ID_END, () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
+            comment_count: expect.any(Number)
           })
         );
       });
   });
+  test("GET returns correct value of comment_count property", () => {
+    return request(app).get("/api/articles/1").expect(200)
+    .then(({ body: { article } }) => {
+      expect(article.comment_count).toBe(11);
+    })
+  })
   test("Get request with out of range ID returns an http 404", () => {
     return request(app).get("/api/articles/6767").expect(404);
   });
@@ -133,6 +147,7 @@ describe(Endpoints.ALL_USERS_END, () => {
   });
 });
 
+//tests for //tests for GET /api/articles/:article_id
 //close connection to database
 afterAll(() => {
   return db.end();

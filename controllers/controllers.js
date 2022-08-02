@@ -3,6 +3,7 @@ const {
   selectArticleById,
   selectAllUsers,
   updateArticleById,
+  selectNumberOfArticleComments,
 } = require(`${__dirname}/../models/models.js`);
 
 module.exports.getAllTopics = (req, res) => {
@@ -15,13 +16,26 @@ module.exports.getAllTopics = (req, res) => {
 
 module.exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  selectArticleById(id)
-    .then((article) => {
+  const numberOfComments = [];
+
+  //get count of comments
+  selectNumberOfArticleComments(id)
+    .then((count) => {
+      numberOfComments.push(parseInt(count));
+      return count;
+    })
+    .then(() => {
+      return selectArticleById(id);
+    })
+    .then(([article]) => {
+      article.comment_count = numberOfComments[0];
       const responseBody = { article };
       res.status(200).send(responseBody);
     })
     .catch(next);
 };
+
+//select specific article
 
 module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
@@ -43,11 +57,8 @@ module.exports.patchArticleById = (req, res, next) => {
 };
 
 module.exports.getAllUsers = (req, res) => {
-  selectAllUsers()
-  .then((users) => {
-    const responseBody = {users}
-  res.status(200).send(responseBody);
+  selectAllUsers().then((users) => {
+    const responseBody = { users };
+    res.status(200).send(responseBody);
   });
-  };
-
-
+};
