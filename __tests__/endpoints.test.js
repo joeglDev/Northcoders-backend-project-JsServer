@@ -119,8 +119,16 @@ describe(Endpoints.ALL_USERS_END, () => {
     return request(app)
       .get(Endpoints.ALL_USERS_END)
       .expect(200)
-      .then(({body : users}) => {
-        expect(users.length).toBe(4);
+      .then(({ body: { users } }) => {
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
       });
   });
 });

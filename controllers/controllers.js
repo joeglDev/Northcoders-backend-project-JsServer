@@ -46,7 +46,7 @@ module.exports.getAllUsers = (req, res) => {
   selectAllUsers()
   .then((users) => {
     const responseBody = {users}
-  res.status(200).send(users);
+  res.status(200).send(responseBody);
   });
   };
 
