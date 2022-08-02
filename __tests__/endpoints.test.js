@@ -6,7 +6,6 @@ const data = require(`${__dirname}/../db/data/test-data/index.js`);
 const seed = require(`${__dirname}/../db/seeds/seed.js`);
 
 //before tests connect to database and run seed to populate
-
 beforeEach(() => seed(data));
 
 //tests for GET /api/topics
