@@ -22,15 +22,24 @@ module.exports.getArticleById = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.patchArticleById = (req, res) => {
+module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  const votesToAdd = req.body.inc_votes;
+  //handle malformed req body
+
   //get article by id
   selectArticleById(id)
     .then((data) => {
       return data;
     })
     .then((data) => {
+      const votesToAdd = req.body.inc_votes;
+      //throw custom error for malformed req body
+      if (!votesToAdd) {
+        throw new Error("400-malformed-body");
+      }
+      if (typeof votesToAdd !== 'number') {
+        throw new Error("400-bad-data-type")
+      }
       const newVotes = data[0].votes + votesToAdd;
       return newVotes;
     })
@@ -40,14 +49,6 @@ module.exports.patchArticleById = (req, res) => {
         const responseBody = { updated_article: article };
         res.status(201).send(responseBody);
       });
-    });
-
-  /*
-    .then((article) => {
-      console.log("controller ", article)
-      const responseBody = { article };
-      res.status(200).send(responseBody);
     })
     .catch(next);
-    */
 };

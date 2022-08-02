@@ -32,14 +32,34 @@ To set up this project's environment:
  {
         article: [
           {
-            article_id: 3,
-            title: 'Eight pug gifs that remind me of mitch',
-            topic: 'mitch',
-            author: 'icellusedkars',
-            body: 'some gifs',
-            created_at: '2020-11-03T09:12:00.000Z',
-            votes: 0
+            article_id: Number,
+            title: String,
+            topic: String,
+            author: String,
+            body: String,
+            created_at: String,
+            votes: Number
           }
         ]
       }
 ```
+
+2. `PATCH /api/articles/:article_id` - Returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.
+
+```
+ {
+        article: [
+          {
+            article_id: Number,
+            title: String,
+            topic: String,
+            author: String,
+            body: String,
+            created_at: String,
+            votes: Number
+          }
+        ]
+      }
+```
+
+
