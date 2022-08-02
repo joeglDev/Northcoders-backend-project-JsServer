@@ -44,7 +44,7 @@ To set up this project's environment:
       }
 ```
 
-2. `PATCH /api/articles/:article_id` - Returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.
+3. `PATCH /api/articles/:article_id` - Returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.
 
 ```
  {
@@ -61,5 +61,17 @@ To set up this project's environment:
         ]
       }
 ```
+4. `GET /api/users` - Returns an object with a array of objects representing users on key of users.
 
+```
+{
+  users : [
+    {
+      username : String,
+      name: String,
+      avatar_url : String
+    },
+  ]
+}
+```
 

@@ -1,6 +1,7 @@
 const {
   selectAllTopics,
   selectArticleById,
+  selectAllUsers,
   updateArticleById,
 } = require(`${__dirname}/../models/models.js`);
 
@@ -40,3 +41,13 @@ module.exports.patchArticleById = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.getAllUsers = (req, res) => {
+  selectAllUsers()
+  .then((users) => {
+    const responseBody = {users}
+  res.status(200).send(users);
+  });
+  };
+
+
