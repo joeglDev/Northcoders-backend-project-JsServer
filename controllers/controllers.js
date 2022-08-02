@@ -16,12 +16,14 @@ module.exports.getAllTopics = (req, res) => {
 module.exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
   selectArticleById(id)
-    .then((article) => {
+    .then(([article]) => {
       const responseBody = { article };
       res.status(200).send(responseBody);
     })
     .catch(next);
 };
+
+//select specific article
 
 module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
@@ -43,11 +45,8 @@ module.exports.patchArticleById = (req, res, next) => {
 };
 
 module.exports.getAllUsers = (req, res) => {
-  selectAllUsers()
-  .then((users) => {
-    const responseBody = {users}
-  res.status(200).send(responseBody);
+  selectAllUsers().then((users) => {
+    const responseBody = { users };
+    res.status(200).send(responseBody);
   });
-  };
-
-
+};
