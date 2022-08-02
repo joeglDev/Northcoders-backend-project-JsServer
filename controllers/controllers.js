@@ -3,7 +3,6 @@ const {
   selectArticleById,
   selectAllUsers,
   updateArticleById,
-  selectNumberOfArticleComments,
 } = require(`${__dirname}/../models/models.js`);
 
 module.exports.getAllTopics = (req, res) => {
@@ -16,17 +15,8 @@ module.exports.getAllTopics = (req, res) => {
 
 module.exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  const numberOfComments = [];
-  //get count of comments
-  selectNumberOfArticleComments(id)
-    .then((count) => {
-      numberOfComments.push(parseInt(count));
-    })
-    .then(() => {
-      return selectArticleById(id);
-    })
+  selectArticleById(id)
     .then(([article]) => {
-      article.comment_count = numberOfComments[0];
       const responseBody = { article };
       res.status(200).send(responseBody);
     })

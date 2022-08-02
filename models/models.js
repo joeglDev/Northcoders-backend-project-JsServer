@@ -8,7 +8,21 @@ module.exports.selectAllTopics = () => {
 
 module.exports.selectArticleById = (id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
+    .query(
+      `SELECT articles.article_id,
+    articles.title,
+    articles.topic,
+    articles.author,
+    articles.body,
+    articles.created_at,
+    articles.votes,
+    CAST(COUNT(articles.article_id) AS INT) AS comment_count FROM articles
+    INNER JOIN comments
+    ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`,
+      [id]
+    )
     .then(({ rows: article }) => {
       if (article.length === 0) {
         return Promise.reject({
@@ -18,16 +32,6 @@ module.exports.selectArticleById = (id) => {
       }
       return article;
     });
-};
-
-module.exports.selectNumberOfArticleComments = (id) => {
-  return db.query(
-    "SELECT COUNT(*) AS count FROM comments WHERE article_id = $1;",
-    [id]
-  )
-  .then(({rows}) => {
-    return rows[0].count
-  })
 };
 
 module.exports.updateArticleById = (id, votesToAdd) => {
