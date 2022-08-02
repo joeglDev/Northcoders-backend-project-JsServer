@@ -4,6 +4,7 @@ const app = require(`${__dirname}/../app.js`);
 const db = require(`${__dirname}/../db/connection.js`);
 const data = require(`${__dirname}/../db/data/test-data/index.js`);
 const seed = require(`${__dirname}/../db/seeds/seed.js`);
+require("jest-sorted");
 
 //before tests connect to database and run seed to populate
 beforeEach(() => seed(data));
@@ -50,17 +51,19 @@ describe(Endpoints.ARTICLE_BY_ID_END, () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            comment_count: expect.any(Number)
+            comment_count: expect.any(Number),
           })
         );
       });
   });
   test("GET returns correct value of comment_count property", () => {
-    return request(app).get("/api/articles/1").expect(200)
-    .then(({ body: { article } }) => {
-      expect(article.comment_count).toBe(11);
-    })
-  })
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.comment_count).toBe(11);
+      });
+  });
   test("Get request with out of range ID returns an http 404", () => {
     return request(app).get("/api/articles/6767").expect(404);
   });
@@ -135,6 +138,40 @@ describe(Endpoints.ALL_USERS_END, () => {
             })
           );
         });
+      });
+  });
+});
+
+//test order
+//tests for GET /api/articles
+describe(Endpoints.ALL_ARTICLES_END, () => {
+  test("returns a response object with value of a ray of article objects with http status code 200", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END)
+      .expect(200)
+      .then(({ body: rows }) => {
+        rows.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              comment_count: expect.any(Number),
+              votes: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("returned array is sorted by object key: created_at in descending date", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END)
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "created_at", descending: true });
       });
   });
 });

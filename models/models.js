@@ -51,3 +51,19 @@ module.exports.selectAllUsers = () => {
     return users;
   });
 };
+
+module.exports.selectAllArticles = () => {
+  return db.query(`SELECT articles.article_id,
+  articles.title,
+  articles.topic,
+  articles.author,
+  articles.created_at,
+  articles.votes,
+  CAST(COUNT(articles.article_id) AS INT) AS comment_count FROM articles
+  INNER JOIN comments
+  ON articles.article_id = comments.article_id
+  GROUP BY articles.article_id;`)
+  .then(({rows : articles}) => {
+    return articles
+  })
+}
