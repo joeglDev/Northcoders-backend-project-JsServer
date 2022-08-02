@@ -24,31 +24,19 @@ module.exports.getArticleById = (req, res, next) => {
 
 module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
+  const votes = req.body.inc_votes;
   //handle malformed req body
-
-  //get article by id
-  selectArticleById(id)
-    .then((data) => {
-      return data;
-    })
-    .then((data) => {
-      const votesToAdd = req.body.inc_votes;
-      //throw custom error for malformed req body
-      if (!votesToAdd) {
-        throw new Error("400-malformed-body");
-      }
-      if (typeof votesToAdd !== 'number') {
-        throw new Error("400-bad-data-type")
-      }
-      const newVotes = data[0].votes + votesToAdd;
-      return newVotes;
-    })
-    //update article
-    .then((newVotes) => {
-      updateArticleById(id, newVotes).then((article) => {
-        const responseBody = { updated_article: article };
-        res.status(201).send(responseBody);
-      });
+  if (!votes) {
+    throw new Error("400-malformed-body");
+  }
+  if (typeof votes !== "number") {
+    throw new Error("400-bad-data-type");
+  }
+  //update article
+  updateArticleById(id, votes)
+    .then((article) => {
+      const responseBody = { updated_article: article };
+      res.status(201).send(responseBody);
     })
     .catch(next);
 };

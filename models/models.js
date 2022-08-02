@@ -23,7 +23,7 @@ module.exports.selectArticleById = (id) => {
 module.exports.updateArticleById = (id, votesToAdd) => {
   return db
     .query(
-      "UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;",
+      "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
       [votesToAdd, id]
     )
     .then((data) => {
