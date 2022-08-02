@@ -32,14 +32,6 @@ describe(Endpoints.ALL_TOPICS_END, () => {
   });
 });
 
-//comments are linked by FK article_id
-//func to count comments of same id
-//add this to response bod
-
-//test for 2
-
-//err no comments so [] returned vs comment id invalid or OOR
-
 //tests for GET /api/articles/:article_id
 describe(Endpoints.ARTICLE_BY_ID_END, () => {
   test("GET request returns a status code of 200", () => {

@@ -17,12 +17,10 @@ module.exports.getAllTopics = (req, res) => {
 module.exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
   const numberOfComments = [];
-
   //get count of comments
   selectNumberOfArticleComments(id)
     .then((count) => {
       numberOfComments.push(parseInt(count));
-      return count;
     })
     .then(() => {
       return selectArticleById(id);
