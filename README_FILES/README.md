@@ -25,3 +25,21 @@ To set up this project's environment:
         ]
       }
 ```
+
+2. `GET /api/articles/:article_id` - Returns a response object with a article object of a given article_id.
+
+```
+ {
+        article: [
+          {
+            article_id: 3,
+            title: 'Eight pug gifs that remind me of mitch',
+            topic: 'mitch',
+            author: 'icellusedkars',
+            body: 'some gifs',
+            created_at: '2020-11-03T09:12:00.000Z',
+            votes: 0
+          }
+        ]
+      }
+```
