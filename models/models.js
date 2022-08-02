@@ -20,6 +20,7 @@ module.exports.selectArticleById = (id) => {
     });
 };
 
+
 module.exports.updateArticleById = (id, votesToAdd) => {
   return db
     .query(
@@ -32,4 +33,11 @@ module.exports.updateArticleById = (id, votesToAdd) => {
     });
 };
 
-module.exports.updateArticleById;
+module.exports.selectAllUsers = () => {
+  return db
+  .query('SELECT * FROM users')
+  .then(({rows : users}) => {
+  return users
+  })
+  };
+  
