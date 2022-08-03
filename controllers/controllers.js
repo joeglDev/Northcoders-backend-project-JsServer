@@ -3,7 +3,8 @@ const {
   selectArticleById,
   selectAllUsers,
   updateArticleById,
-  selectAllArticles
+  selectAllArticles,
+  selectCommentsByArticleId,
 } = require(`${__dirname}/../models/models.js`);
 
 module.exports.getAllTopics = (req, res) => {
@@ -25,7 +26,6 @@ module.exports.getArticleById = (req, res, next) => {
 };
 
 //select specific article
-
 module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
   const votes = req.body.inc_votes;
@@ -53,9 +53,28 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getAllArticles = (req, res) => {
-  selectAllArticles()
-  .then((articles) => {
-const responseBody = {articles}
+  selectAllArticles().then((articles) => {
+    const responseBody = { articles };
     res.status(200).send(responseBody);
   });
+};
+
+/*
+Valid article id - comments found
+Valid article id - no comments found. Model uses a utility function to select article_id and returns a value to controller if valid. 404
+Invalid article id - Utility func rejects promise -> 400
+*/
+module.exports.getCommentsByArticleId = (req, res, next) => {
+  const id = req.params.article_id;
+  selectCommentsByArticleId(id)
+    .then((modelOutput) => {
+      if (modelOutput === true) {
+        const responseBody = { comments: [] };
+        res.status(200).send(responseBody);
+      } else {
+        const responseBody = { comments: modelOutput };
+        res.status(200).send(responseBody);
+      }
+    })
+    .catch(next);
 };

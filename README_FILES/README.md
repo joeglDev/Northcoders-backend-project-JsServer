@@ -94,3 +94,20 @@ To set up this project's environment:
   ]
 }
 ```
+
+6. `GET /api/articles/:article_id/comments` - Returns a array of objects representing the comments on a specific article on a key of comments.
+
+```
+{
+  comments :
+  [
+    {
+      comment_id : Number
+      author : String
+      body : String
+      created_at : String
+      votes : Number
+    },
+  ]
+}
+```

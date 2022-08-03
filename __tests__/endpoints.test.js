@@ -142,7 +142,6 @@ describe(Endpoints.ALL_USERS_END, () => {
   });
 });
 
-//test order
 //tests for GET /api/articles
 describe(Endpoints.ALL_ARTICLES_END, () => {
   test("returns a response object with value of a ray of article objects with http status code 200", () => {
@@ -176,13 +175,13 @@ describe(Endpoints.ALL_ARTICLES_END, () => {
   });
   test("articles with 0 comments return a value of 0 on comment_count", () => {
     return request(app)
-    .get(Endpoints.ALL_ARTICLES_END)
-    .expect(200)
-    .then(({ body: rows }) => {
-      const articles = rows.articles;
-      expect(articles[11].comment_count).toBe(0);
-    });
-  })
+      .get(Endpoints.ALL_ARTICLES_END)
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles[11].comment_count).toBe(0);
+      });
+  });
   test("returned array is sorted by object key: created_at in descending date", () => {
     return request(app)
       .get(Endpoints.ALL_ARTICLES_END)
@@ -202,7 +201,69 @@ describe(Endpoints.ALL_ARTICLES_END, () => {
   });
 });
 
-//tests for GET /api/articles/:article_id
+// tests for GET /api/articles/:article_id/comments
+//correct length
+//correct type of body
+describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
+  test("returns all comments for a given article id with http status code 200", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(11);
+      });
+  });
+  test("returns an array of objects; for which each object has the correct properties", () => {
+    return (
+      request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        //correct keys present
+        .then(({ body: { comments } }) => {
+          //correct number of  keys
+          expect(Object.keys(comments[0]).length).toBe(5);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
+          });
+        })
+    );
+  });
+  test("returns http status code 400 and a error message object for a article_id of invalid type", () => {
+    return request(app)
+      .get("/api/articles/invalidId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Error 400: Not a valid id.");
+      });
+  });
+  test("returns a http status code of 404 and a error message object for a id which is not found", () => {
+    return request(app)
+    .get("/api/articles/99999/comments")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Error 404: No articles found for article_id 99999.");
+    });
+  });
+  test("returns a empty array for valid article_id / no comments found", () => {
+    return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then(({ body : comments}) => {
+      expect(comments.comments).toEqual([]) 
+    })
+    
+  })
+});
+
+
 //close connection to database
 afterAll(() => {
   return db.end();
