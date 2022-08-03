@@ -174,6 +174,13 @@ describe(Endpoints.ALL_ARTICLES_END, () => {
         expect(articles).toBeSorted({ key: "created_at", descending: true });
       });
   });
+  test("returns http code 404 for a invalid route", () => {
+    return request(app)
+    .get("/api/articleInvaid").expect(400)
+    .then(({ body: response }) => {
+      expect(response.msg).toBe("Error 400: Path invalid.");
+    });
+  })
 });
 
 //tests for GET /api/articles/:article_id
