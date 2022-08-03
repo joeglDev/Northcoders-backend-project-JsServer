@@ -26,7 +26,6 @@ module.exports.getArticleById = (req, res, next) => {
 };
 
 //select specific article
-
 module.exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
   const votes = req.body.inc_votes;
@@ -60,12 +59,16 @@ module.exports.getAllArticles = (req, res) => {
   });
 };
 
+/*
+Valid article id - comments found
+Valid article id - no comments found. Model uses a utility function to select article_id and returns a value to controller if valid. 404
+Invalid article id - Utility func rejects promise -> 400
+*/
 module.exports.getCommentsByArticleId = (req, res, next) => {
   const id = req.params.article_id;
   selectCommentsByArticleId(id)
     .then((modelOutput) => {
       if (modelOutput === true) {
-        //send empty array if valid ie article exists but no comments
         const responseBody = { comments: [] };
         res.status(200).send(responseBody);
       } else {

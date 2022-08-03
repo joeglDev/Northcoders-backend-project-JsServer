@@ -85,7 +85,6 @@ module.exports.selectCommentsByArticleId = (id) => {
       [id]
     )
     .then(({ rows: comments }) => {
-      //check if empty arr
       if (!comments.length) {
         const isFound = checkIdExists("articles", "article_id", id);
         return isFound;

@@ -142,7 +142,6 @@ describe(Endpoints.ALL_USERS_END, () => {
   });
 });
 
-//test order
 //tests for GET /api/articles
 describe(Endpoints.ALL_ARTICLES_END, () => {
   test("returns a response object with value of a ray of article objects with http status code 200", () => {
