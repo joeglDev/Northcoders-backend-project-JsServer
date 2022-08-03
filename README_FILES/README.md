@@ -61,6 +61,7 @@ To set up this project's environment:
         ]
       }
 ```
+
 4. `GET /api/users` - Returns an object with a array of objects representing users on key of users.
 
 ```
@@ -75,3 +76,21 @@ To set up this project's environment:
 }
 ```
 
+5. `GET /api/articles` - Returns an object with an array of objects representing articles on key of articles.
+
+```
+{
+  articles : [
+    {
+          article_id: Number,
+          title: String,
+          topic: String,
+          author: String,,
+          created_at: String,,
+          votes: Number,
+          comment_count: Number
+        }
+
+  ]
+}
+```
