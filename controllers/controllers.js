@@ -3,8 +3,11 @@ const {
   selectArticleById,
   selectAllUsers,
   updateArticleById,
-  selectAllArticles
+  selectAllArticles,
+  selectCommentsByArticleId
 } = require(`${__dirname}/../models/models.js`);
+
+const checkIdExists = require(`${__dirname}/../utils`);
 
 module.exports.getAllTopics = (req, res) => {
   //invokes model
@@ -53,9 +56,46 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getAllArticles = (req, res) => {
-  selectAllArticles()
-  .then((articles) => {
-const responseBody = {articles}
+  selectAllArticles().then((articles) => {
+    const responseBody = { articles };
     res.status(200).send(responseBody);
   });
 };
+
+module.exports.getCommentsByArticleId = (req, res, next) => {
+  const id = req.params.article_id
+  selectCommentsByArticleId(id).then((comments) => {
+    //check if empty arr
+    if (!comments.length) {
+      const isFound = checkIdExists("articles", "article_id", id)
+      return isFound
+    }
+    //not empty array so comments found
+    else {
+      const responseBody = { comments };
+      res.status(200).send(responseBody);
+    }
+   return isFound
+  })
+  .then((isFound) => {
+    //send empty array if valid ie article exists but no comments
+    if (isFound) {
+      const responseBody = { comments : []};
+      res.status(200).send(responseBody);
+    }
+  })
+  .catch(next);
+};
+
+
+/*
+  //if empty []
+      if (!comments.length) {
+        console.log("EMPTY [] - CHECKING")
+     const isFound = checkIdExists("comments", "article_id", id)
+     return isFound
+      }
+      else { return selectComments}
+    }); Proimise.all([selectComments, isFound]).then((values) => {
+      console.log(values)
+*/

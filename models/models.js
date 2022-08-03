@@ -1,5 +1,6 @@
 const db = require(`${__dirname}/../db/connection.js`);
 
+
 module.exports.selectAllTopics = () => {
   return db.query("SELECT * FROM topics").then(({ rows: topics }) => {
     return topics;
@@ -53,7 +54,9 @@ module.exports.selectAllUsers = () => {
 };
 
 module.exports.selectAllArticles = () => {
-  return db.query(`SELECT articles.article_id,
+  return db
+    .query(
+      `SELECT articles.article_id,
   articles.title,
   articles.topic,
   articles.author,
@@ -63,8 +66,26 @@ module.exports.selectAllArticles = () => {
   LEFT OUTER JOIN comments
   ON articles.article_id = comments.article_id
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`)
-  .then(({rows : articles}) => {
-    return articles
-  })
-}
+  ORDER BY articles.created_at DESC;`
+    )
+    .then(({ rows: articles }) => {
+      return articles;
+    });
+};
+
+module.exports.selectCommentsByArticleId = (id) => {
+  return db
+    .query(
+      `SELECT comment_id, 
+      author, 
+      body, 
+      created_at, 
+      votes 
+      FROM comments WHERE article_id = $1`,
+      [id]
+    )
+    .then(({ rows: comments }) => {
+      return comments;
+    })   
+};
+
