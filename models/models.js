@@ -1,5 +1,5 @@
 const db = require(`${__dirname}/../db/connection.js`);
-
+const checkIdExists = require(`${__dirname}/../utils`);
 
 module.exports.selectAllTopics = () => {
   return db.query("SELECT * FROM topics").then(({ rows: topics }) => {
@@ -85,7 +85,12 @@ module.exports.selectCommentsByArticleId = (id) => {
       [id]
     )
     .then(({ rows: comments }) => {
-      return comments;
-    })   
+      //check if empty arr
+      if (!comments.length) {
+        const isFound = checkIdExists("articles", "article_id", id);
+        return isFound;
+      } else {
+        return comments;
+      }
+    });
 };
-

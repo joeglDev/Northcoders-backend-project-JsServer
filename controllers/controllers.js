@@ -7,7 +7,7 @@ const {
   selectCommentsByArticleId
 } = require(`${__dirname}/../models/models.js`);
 
-const checkIdExists = require(`${__dirname}/../utils`);
+
 
 module.exports.getAllTopics = (req, res) => {
   //invokes model
@@ -64,26 +64,18 @@ module.exports.getAllArticles = (req, res) => {
 
 module.exports.getCommentsByArticleId = (req, res, next) => {
   const id = req.params.article_id
-  selectCommentsByArticleId(id).then((comments) => {
-    //check if empty arr
-    if (!comments.length) {
-      const isFound = checkIdExists("articles", "article_id", id)
-      return isFound
-    }
-    //not empty array so comments found
-    else {
-      const responseBody = { comments };
-      res.status(200).send(responseBody);
-    }
-   return isFound
-  })
-  .then((isFound) => {
-    //send empty array if valid ie article exists but no comments
-    if (isFound) {
-      const responseBody = { comments : []};
-      res.status(200).send(responseBody);
-    }
-  })
+  selectCommentsByArticleId(id).then((modelOutput) => {
+    
+    if (modelOutput === true) {
+        //send empty array if valid ie article exists but no comments
+          const responseBody = { comments : []};
+          res.status(200).send(responseBody);
+        }
+    else {  
+      const responseBody = { comments : modelOutput };
+    res.status(200).send(responseBody);
+  }
+})
   .catch(next);
 };
 
