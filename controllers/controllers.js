@@ -4,10 +4,8 @@ const {
   selectAllUsers,
   updateArticleById,
   selectAllArticles,
-  selectCommentsByArticleId
+  selectCommentsByArticleId,
 } = require(`${__dirname}/../models/models.js`);
-
-
 
 module.exports.getAllTopics = (req, res) => {
   //invokes model
@@ -63,31 +61,17 @@ module.exports.getAllArticles = (req, res) => {
 };
 
 module.exports.getCommentsByArticleId = (req, res, next) => {
-  const id = req.params.article_id
-  selectCommentsByArticleId(id).then((modelOutput) => {
-    
-    if (modelOutput === true) {
+  const id = req.params.article_id;
+  selectCommentsByArticleId(id)
+    .then((modelOutput) => {
+      if (modelOutput === true) {
         //send empty array if valid ie article exists but no comments
-          const responseBody = { comments : []};
-          res.status(200).send(responseBody);
-        }
-    else {  
-      const responseBody = { comments : modelOutput };
-    res.status(200).send(responseBody);
-  }
-})
-  .catch(next);
-};
-
-
-/*
-  //if empty []
-      if (!comments.length) {
-        console.log("EMPTY [] - CHECKING")
-     const isFound = checkIdExists("comments", "article_id", id)
-     return isFound
+        const responseBody = { comments: [] };
+        res.status(200).send(responseBody);
+      } else {
+        const responseBody = { comments: modelOutput };
+        res.status(200).send(responseBody);
       }
-      else { return selectComments}
-    }); Proimise.all([selectComments, isFound]).then((values) => {
-      console.log(values)
-*/
+    })
+    .catch(next);
+};

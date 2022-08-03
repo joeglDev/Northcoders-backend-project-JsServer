@@ -11,7 +11,8 @@ module.exports = checkIdExists = (table, column, value) => {
         status: 404,
         msg: `Error 404: No articles found for article_id ${value}.`,
       });
+    } else {
+      return true;
     }
-    else {return true}
   });
 };
