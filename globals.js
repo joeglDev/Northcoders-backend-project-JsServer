@@ -3,6 +3,7 @@ class Endpoints {
     static INVALID_END = "/invalid";
     static ARTICLE_BY_ID_END = "/api/articles/:article_id";
     static ALL_USERS_END = "/api/users";
+    static ALL_ARTICLES_END = "/api/articles";
 };
 
 
