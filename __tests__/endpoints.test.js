@@ -246,23 +246,119 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
   });
   test("returns a http status code of 404 and a error message object for a id which is not found", () => {
     return request(app)
-    .get("/api/articles/99999/comments")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Error 404: No articles found for article_id 99999.");
-    });
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "Error 404: No articles found for article_id 99999."
+        );
+      });
   });
   test("returns a empty array for valid article_id / no comments found", () => {
     return request(app)
-    .get("/api/articles/2/comments")
-    .expect(200)
-    .then(({ body : comments}) => {
-      expect(comments.comments).toEqual([]) 
-    })
-    
-  })
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: comments }) => {
+        expect(comments.comments).toEqual([]);
+      });
+  });
 });
 
+//tests for POST/api/articles/:article_id/comments
+describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
+  test("returns posted comment and http status code of 201", () => {
+    const newComment = { username: "hiroji", body: "merp!" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: {comment} }) => {
+       
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_id : expect.any(Number)
+          })
+        );
+      });
+  });
+  test("returns a http status code of 400 and a error message for if not posted an object with username and body", () => {
+    const newComment = {};
+    return request(app) 
+    .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe("Error 400: Malformed request body.")
+  })
+});
+test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+  const newComment = {body : "Test"};
+  return request(app) 
+  .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body: err}) => {
+      expect(err.msg).toBe("Error 400: Malformed request body.")
+})
+});
+test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+  const newComment = {username : undefined, body : "Test"};
+  return request(app) 
+  .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body: err}) => {
+      expect(err.msg).toBe("Error 400: Malformed request body.")
+})
+});
+
+test("returns a status code of 404 and an error message if sent a article id which does not exist", () => {
+  const newComment = { username: "hiroji", body: "merp!" };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe('Error 404: No articles found for article_id 9999.')
+      });
+});
+test("returns a status code of 400 and an error message if sent a article id which is invalid", () => {
+  const newComment = { username: "hiroji", body: "merp!" };
+    return request(app)
+      .post("/api/articles/invalidid/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe("Error 400: Not a valid id.")
+      })
+});
+test("returns posted comment and http status code of 201 for existing user", () => {
+  const newComment = { username: "lurker", body: "TEST" };
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({ body: {comment} }) => {
+     
+      expect(comment).toEqual(
+        expect.objectContaining({
+          comment_id: expect.any(Number),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_id : expect.any(Number)
+        })
+      );
+    });
+});
+
+});
 
 //close connection to database
 afterAll(() => {
