@@ -84,10 +84,15 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
   const id = req.params.article_id;
   const username = req.body.username;
   const body = req.body.body;
+  //handle malformed req body
+  if (!username || !body) {
+    throw new Error("400-malformed-body");
+  };
+
   insertCommentByArticleId(id, username, body)
-  .then(([comment]) => {
-    const responseBody = {comment};
-    res.status(201).send(responseBody);
-  })
-  
-}
+    .then(([comment]) => {
+      const responseBody = { comment };
+      res.status(201).send(responseBody);
+    })
+    .catch(next);
+};

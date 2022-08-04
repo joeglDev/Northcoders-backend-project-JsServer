@@ -299,6 +299,16 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
         );
       });
   });
+  test("returns a http status code of 400 and a error message for if not posted an object with username and body", () => {
+    const newComment = {};
+    return request(app) 
+    .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe("Error 400: Malformed request body.")
+  })
+});
 });
 
 //close connection to database
