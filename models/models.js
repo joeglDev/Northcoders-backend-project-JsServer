@@ -93,7 +93,8 @@ module.exports.selectCommentsByArticleId = (id) => {
       } else {
         return comments;
       }
-    });
+    })
+   
 };
 
 //requires helper function to insert new username FK into user table
@@ -139,7 +140,11 @@ const insertUser = (username) => {
     ` 
   INSERT INTO users (username, name) VALUES ($1, $1);`,
     [username]
-  );
+  )
+  //catch PSQL errors resulting from duplicate username PRIMARY KEY
+  .catch((err) => {
+    if (err.code === '23505') {return Promise.resolve()}
+  })
 };
 
 

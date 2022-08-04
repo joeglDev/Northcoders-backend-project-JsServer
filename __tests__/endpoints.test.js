@@ -317,8 +317,39 @@ test("returns a status code of 404 and an error message if sent a article id whi
       .expect(404)
       .then(({ body: err}) => {
         expect(err.msg).toBe('Error 404: No articles found for article_id 9999.')
+      });
+});
+test("returns a status code of 400 and an error message if sent a article id which is invalid", () => {
+  const newComment = { username: "hiroji", body: "merp!" };
+    return request(app)
+      .post("/api/articles/invalidid/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe("Error 400: Not a valid id.")
       })
-})
+});
+test("returns posted comment and http status code of 201 for existing user", () => {
+  const newComment = { username: "lurker", body: "TEST" };
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({ body: {comment} }) => {
+     
+      expect(comment).toEqual(
+        expect.objectContaining({
+          comment_id: expect.any(Number),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_id : expect.any(Number)
+        })
+      );
+    });
+});
+
 });
 
 //close connection to database
