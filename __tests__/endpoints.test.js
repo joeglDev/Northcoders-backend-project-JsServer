@@ -309,6 +309,16 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
         expect(err.msg).toBe("Error 400: Malformed request body.")
   })
 });
+test("returns a status code of 404 and an error message if sent a article id which does not exist", () => {
+  const newComment = { username: "hiroji", body: "merp!" };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: err}) => {
+        expect(err.msg).toBe('Error 404: No articles found for article_id 9999.')
+      })
+})
 });
 
 //close connection to database

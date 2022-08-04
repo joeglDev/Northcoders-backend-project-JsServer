@@ -74,6 +74,8 @@ module.exports.selectAllArticles = () => {
 };
 
 module.exports.selectCommentsByArticleId = (id) => {
+
+  
   return db
     .query(
       `SELECT comment_id, 
@@ -96,6 +98,10 @@ module.exports.selectCommentsByArticleId = (id) => {
 
 //requires helper function to insert new username FK into user table
 module.exports.insertCommentByArticleId = (id, username, body) => {
+
+  
+
+
   const currentDate = new Date();
   const newComment = {
     author: username,

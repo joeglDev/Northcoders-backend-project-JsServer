@@ -7,6 +7,7 @@ const {
   selectCommentsByArticleId,
   insertCommentByArticleId,
 } = require(`${__dirname}/../models/models.js`);
+const checkIdExists = require(`${__dirname}/../utils`);
 
 module.exports.getAllTopics = (req, res) => {
   //invokes model
@@ -84,10 +85,16 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
   const id = req.params.article_id;
   const username = req.body.username;
   const body = req.body.body;
+
+  //check article_id is present in articles table
+  checkIdExists("articles", "article_id", id)
+  .catch(next)
+
   //handle malformed req body
   if (!username || !body) {
     throw new Error("400-malformed-body");
   };
+  //check article_id exists
 
   insertCommentByArticleId(id, username, body)
     .then(([comment]) => {
@@ -96,3 +103,5 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+
