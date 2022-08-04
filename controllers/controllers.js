@@ -88,20 +88,18 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
 
   //check article_id is present in articles table
   checkIdExists("articles", "article_id", id)
-  .catch(next)
+    .then(() => {
+      //handle malformed req body
+      if (!username || !body) {
+        throw new Error("400-malformed-body");
+      }
 
-  //handle malformed req body
-  if (!username || !body) {
-    throw new Error("400-malformed-body");
-  };
-  //check article_id exists
-
-  insertCommentByArticleId(id, username, body)
+      const comment = insertCommentByArticleId(id, username, body);
+      return comment;
+    })
     .then(([comment]) => {
       const responseBody = { comment };
       res.status(201).send(responseBody);
     })
     .catch(next);
 };
-
-
