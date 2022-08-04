@@ -93,3 +93,47 @@ module.exports.selectCommentsByArticleId = (id) => {
       }
     });
 };
+
+//requires helper function to insert new username FK into user table
+module.exports.insertCommentByArticleId = (id, username, body) => {
+  const currentDate = new Date();
+  const newComment = {
+    author: username,
+    body: body,
+    created_at: currentDate,
+    votes: 0,
+    article_id: id,
+  };
+
+  return insertUser(username)
+    .then(() => {
+      return db.query(
+        ` 
+  INSERT INTO comments
+ (author, body, created_at, votes, article_id)
+VALUES
+($1, $2, $3, $4, $5) RETURNING *;`,
+        [
+          newComment.author,
+          newComment.body,
+          newComment.created_at,
+          newComment.votes,
+          newComment.article_id,
+        ]
+      );
+    })
+
+    .then(({rows : comment}) => {
+      return comment
+    });
+};
+
+const insertUser = (username) => {
+  return db.query(
+    ` 
+  INSERT INTO users (username, name) VALUES ($1, $1);`,
+    [username]
+  );
+};
+
+//call helper func -> do sql insert users then call next

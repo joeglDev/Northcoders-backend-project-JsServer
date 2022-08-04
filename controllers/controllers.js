@@ -5,6 +5,7 @@ const {
   updateArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  insertCommentByArticleId,
 } = require(`${__dirname}/../models/models.js`);
 
 module.exports.getAllTopics = (req, res) => {
@@ -78,3 +79,15 @@ module.exports.getCommentsByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.postCommentsByArticleId = (req, res, next) => {
+  const id = req.params.article_id;
+  const username = req.body.username;
+  const body = req.body.body;
+  insertCommentByArticleId(id, username, body)
+  .then(([comment]) => {
+    const responseBody = {comment};
+    res.status(201).send(responseBody);
+  })
+  
+}
