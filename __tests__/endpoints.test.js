@@ -309,6 +309,27 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
         expect(err.msg).toBe("Error 400: Malformed request body.")
   })
 });
+test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+  const newComment = {body : "Test"};
+  return request(app) 
+  .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body: err}) => {
+      expect(err.msg).toBe("Error 400: Malformed request body.")
+})
+});
+test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+  const newComment = {username : undefined, body : "Test"};
+  return request(app) 
+  .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body: err}) => {
+      expect(err.msg).toBe("Error 400: Malformed request body.")
+})
+});
+
 test("returns a status code of 404 and an error message if sent a article id which does not exist", () => {
   const newComment = { username: "hiroji", body: "merp!" };
     return request(app)
