@@ -18,6 +18,11 @@ const responseBody = {status: 400, msg : "Error 400: Malformed request body."}
     const responseBody = {status: 400, msg :  "Error 400: Body has invalid data type."}
     res.status(400).send(responseBody)
   }
+  //403 Forbidden - bad sql query
+  else if(err.message === "403-bad-sql-query") {
+    const responseBody = { status: 403, msg: "Error 403: Forbidden query value" };
+    res.status(403).send(responseBody)
+  }
   else {
     next(err);
   }

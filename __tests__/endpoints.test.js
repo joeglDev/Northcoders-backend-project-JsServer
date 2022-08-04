@@ -248,15 +248,23 @@ test('topic - filters articles by article topic column', () => {
   .then(({ body: rows }) => {
     
     const articles = rows.articles;
-    console.log(articles);
     expect(articles).toBeSorted({ key: "article_id", descending: false });
     expect(articles.length).toBe(1);
-    expect(articles[0].topic).toBe('cats')
+    expect(articles[0].topic).toBe('cats');
    
 })
 });
-//complex test
-//invalid
+test('topic - protects against sql injection', () => {
+  return request(app)
+  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=DROP*TABLES")
+  .expect(403)
+});
+//400 might be better
+test('rejects an invalid topic', () => {
+  return request(app)
+  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=invalidtopic")
+  .expect(403)
+});
 });
 
 

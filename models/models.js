@@ -56,14 +56,39 @@ module.exports.selectAllUsers = () => {
 module.exports.selectAllArticles = (
   sort_by = "created_at",
   order = "DESC",
-  topic = "1=1"
+  topic = '1=1',
+  next
 ) => {
   //edit topic for insert, default 1=1 -> true hence returns all
-  if (topic !== "1=1") {
-    topic = `topic = '${topic}'`;
-  }
-  //create query
-  let sqlQuery = `SELECT articles.article_id,
+  //check topic does not include SQL statements, can't use $1 for booleans
+
+  //WHERE CLAUSE may need refactoring for protection against sql injections
+
+  //call helper func
+  //check agaisnt topics
+  //if not found reject
+  //get topic in correct format
+  return helperGetTopics()
+    .then((topicArr) => {
+      return topicArr;
+    })
+    .then((topicArr) => { //issue topic does not have quotes
+      const topics = topicArr.map((obj) => {
+        return obj.topic;
+      });
+
+      
+      if (topic === '1=1') {console.log("topic = default")}
+      else if((topics.includes(topic) === false))  {
+
+        throw new Error("403-bad-sql-query");
+      }
+      if (topic !== "1=1") {
+        topic = `topic = '${topic}'`
+      }
+
+      //create query
+      let sqlQuery = `SELECT articles.article_id,
 articles.title,
 articles.topic,
 articles.author,
@@ -74,30 +99,42 @@ LEFT OUTER JOIN comments
 ON articles.article_id = comments.article_id
 WHERE ${topic}
 GROUP BY articles.article_id`;
-  console.log(sqlQuery);
-  //check urlqueries are valid
-  const validSorts = [
-    "title",
-    "topic",
-    "author",
-    "created_at",
-    "votes",
-    "article_id",
-    "comment_count",
-  ];
-  const validOrders = ["ASC", "DESC"];
 
-  //if valid add to query statement
-  if (validSorts.includes(sort_by)) {
-    sqlQuery += ` ORDER BY articles.${sort_by}`;
-    if (validOrders.includes(order)) {
-      sqlQuery += ` ${order};`;
-    }
-  }
 
-  return db.query(sqlQuery).then(({ rows: articles }) => {
-    console.log(articles);
-    return articles;
+
+      //check urlqueries are valid
+      const validSorts = [
+        "title",
+        "topic",
+        "author",
+        "created_at",
+        "votes",
+        "article_id",
+        "comment_count",
+      ];
+      const validOrders = ["ASC", "DESC"];
+
+      //if valid add to query statement
+      if (validSorts.includes(sort_by)) {
+        sqlQuery += ` ORDER BY articles.${sort_by}`;
+        if (validOrders.includes(order)) {
+          sqlQuery += ` ${order};`;
+        }
+      }
+
+      return db.query(sqlQuery).then(({ rows: articles }) => {
+
+        return articles;
+      });
+    })
+    .catch((err) => {
+      return Promise.reject(err)
+    })
+};
+
+const helperGetTopics = () => {
+  return db.query("SELECT topic FROM articles;").then(({ rows: topics }) => {
+    return topics;
   });
 };
 
