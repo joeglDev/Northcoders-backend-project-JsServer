@@ -53,29 +53,55 @@ module.exports.selectAllUsers = () => {
   });
 };
 
-module.exports.selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.article_id,
-  articles.title,
-  articles.topic,
-  articles.author,
-  articles.created_at,
-  articles.votes,
-  CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
-  LEFT OUTER JOIN comments
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`
-    )
-    .then(({ rows: articles }) => {
-      return articles;
-    });
+module.exports.selectAllArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  topic = "1=1"
+) => {
+  //edit topic for insert, default 1=1 -> true hence returns all
+  if (topic !== "1=1") {
+    topic = `topic = '${topic}'`;
+  }
+  //create query
+  let sqlQuery = `SELECT articles.article_id,
+articles.title,
+articles.topic,
+articles.author,
+articles.created_at,
+articles.votes,
+CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
+LEFT OUTER JOIN comments
+ON articles.article_id = comments.article_id
+WHERE ${topic}
+GROUP BY articles.article_id`;
+  console.log(sqlQuery);
+  //check urlqueries are valid
+  const validSorts = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_id",
+    "comment_count",
+  ];
+  const validOrders = ["ASC", "DESC"];
+
+  //if valid add to query statement
+  if (validSorts.includes(sort_by)) {
+    sqlQuery += ` ORDER BY articles.${sort_by}`;
+    if (validOrders.includes(order)) {
+      sqlQuery += ` ${order};`;
+    }
+  }
+
+  return db.query(sqlQuery).then(({ rows: articles }) => {
+    console.log(articles);
+    return articles;
+  });
 };
 
 module.exports.selectCommentsByArticleId = (id) => {
-
-  
   return db
     .query(
       `SELECT comment_id, 
@@ -93,16 +119,11 @@ module.exports.selectCommentsByArticleId = (id) => {
       } else {
         return comments;
       }
-    })
-   
+    });
 };
 
 //requires helper function to insert new username FK into user table
 module.exports.insertCommentByArticleId = (id, username, body) => {
-
-  
-
-
   const currentDate = new Date();
   const newComment = {
     author: username,
@@ -130,21 +151,24 @@ VALUES
       );
     })
 
-    .then(({rows : comment}) => {
-      return comment
+    .then(({ rows: comment }) => {
+      return comment;
     });
 };
 
 const insertUser = (username) => {
-  return db.query(
-    ` 
+  return (
+    db
+      .query(
+        ` 
   INSERT INTO users (username, name) VALUES ($1, $2);`,
-    [username, 'PLACEHOLDER']
-  )
-  //catch PSQL errors resulting from duplicate username PRIMARY KEY
-  .catch((err) => {
-    if (err.code === '23505') {return Promise.resolve()}
-  })
+        [username, "PLACEHOLDER"]
+      )
+      //catch PSQL errors resulting from duplicate username PRIMARY KEY
+      .catch((err) => {
+        if (err.code === "23505") {
+          return Promise.resolve();
+        }
+      })
+  );
 };
-
-

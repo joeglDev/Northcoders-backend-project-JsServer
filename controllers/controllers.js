@@ -55,7 +55,8 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getAllArticles = (req, res) => {
-  selectAllArticles().then((articles) => {
+  const {sort_by, order, topic} = req.query;
+  selectAllArticles(sort_by, order, topic).then((articles) => {
     const responseBody = { articles };
     res.status(200).send(responseBody);
   });
