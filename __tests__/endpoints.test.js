@@ -265,19 +265,6 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
 });
 
 //tests for POST/api/articles/:article_id/comments
-/*
-Request body accepts:
-
-    an object with the following properties:
-        username
-        body
-
-Responds with:
-
-    the posted comment
-
-
-*/
 describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
   test("returns posted comment and http status code of 201", () => {
     const newComment = { username: "hiroji", body: "merp!" };

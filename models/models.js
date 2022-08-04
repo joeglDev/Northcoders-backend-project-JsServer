@@ -138,8 +138,8 @@ VALUES
 const insertUser = (username) => {
   return db.query(
     ` 
-  INSERT INTO users (username, name) VALUES ($1, $1);`,
-    [username]
+  INSERT INTO users (username, name) VALUES ($1, $2);`,
+    [username, 'PLACEHOLDER']
   )
   //catch PSQL errors resulting from duplicate username PRIMARY KEY
   .catch((err) => {
