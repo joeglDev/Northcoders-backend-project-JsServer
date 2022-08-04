@@ -111,3 +111,20 @@ To set up this project's environment:
   ]
 }
 ```
+
+7. `POST /api/articles/:article_id/comments` - Posts a new comment to comments table and returns a object representing the a new comment posted to a specific article.
+```
+{
+  comment :
+  
+    {
+      comment_id : Number
+      author : String
+      body : String
+      created_at : String
+      votes : Number,
+      article_id : Number
+    },
+  
+}
+```
