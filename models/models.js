@@ -59,7 +59,7 @@ module.exports.selectAllUsers = () => {
 module.exports.selectAllArticles = (
   sort_by = "created_at",
   order = "DESC",
-  topic 
+  topic
 ) => {
   //gets list of article topics and uses to determine if injected topic is valid
   return (
@@ -78,10 +78,12 @@ module.exports.selectAllArticles = (
         if (topic) {
           if (topicArr.includes(topic) === false) {
             throw new Error("400-bad-sql-query");
-          } 
-        }  
+          }
+        }
 
-        //do not template in where if undefined
+        //LOGIC BIFURCATES
+        //1. topic = undefined -> run sqlquery
+        //2. topic -> insert into prepared
         let sqlQuery;
         if (topic) {
           sqlQuery = `SELECT articles.article_id,
@@ -93,11 +95,10 @@ module.exports.selectAllArticles = (
           CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
           LEFT OUTER JOIN comments
           ON articles.article_id = comments.article_id
-          WHERE topic = '${topic}'
-          GROUP BY articles.article_id`
+          WHERE topic = $1
+          GROUP BY articles.article_id`;
         } else {
-          sqlQuery = 
-          `SELECT articles.article_id,
+          sqlQuery = `SELECT articles.article_id,
           articles.title,
           articles.topic,
           articles.author,
@@ -106,10 +107,8 @@ module.exports.selectAllArticles = (
           CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
           LEFT OUTER JOIN comments
           ON articles.article_id = comments.article_id
-          GROUP BY articles.article_id`
-        };
-
-       
+          GROUP BY articles.article_id`;
+        }
 
         //check urlqueries  sort_by, order are valid
         const validSorts = [
@@ -132,9 +131,15 @@ module.exports.selectAllArticles = (
         }
 
         //database query to get articles
-        return db.query(sqlQuery).then(({ rows: articles }) => {
-          return articles;
-        });
+        if (!topic) {
+          return db.query(sqlQuery).then(({ rows: articles }) => {
+            return articles;
+          });
+        } else {
+          return db.query(sqlQuery, [topic]).then(({ rows: articles }) => {
+            return articles;
+          });
+        }
       })
       //reject bad sql statements
       .catch((err) => {
