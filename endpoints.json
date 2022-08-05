@@ -1,27 +1,114 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Returns an object representing all api endpoints with a JSON of endpoint information on a key of api_endpoints.",
+    "exampleResponse": ""
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Returns an array of all topics.",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "api_endpoints": {
+        "PATH, String": {
+          "description": "String",
+          "queries": "Array",
+          "exampleResponse": "Object"
+        }
+      }
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+  "GET /api/articles/:article_id": {
+    "description": "Returns a response object with a article object of a given article_id.",
+    "queries": [],
     "exampleResponse": {
-      "articles": [
+      "article": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "article_id": "Number",
+          "title": "String",
+          "topic": "String",
+          "author": "String",
+          "body": "String",
+          "created_at": "String",
+          "votes": "Number"
         }
       ]
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Patches the votes key of articles and returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": "Number",
+          "title": "String",
+          "topic": "String",
+          "author": "String",
+          "body": "String",
+          "created_at": "String",
+          "votes": "Number"
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "Returns an object with an array of objects representing users on key of users.",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "String",
+          "name": "String",
+          "avatar_url": "String"
+        }
+      ]
+    }
+  },
+  "GET /api/articles": {
+    "description": "Returns an object with an array of objects representing articles on key of articles.",
+    "queries": ["sort_by", "order", "topic"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": "Number",
+          "title": "String",
+          "topic": "String",
+          "author": "String",
+          "created_at": "String",
+          "votes": "Number",
+          "comment_count": "Number"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Returns a array of objects representing the comments on a specific article on a key of comments.",
+    "queries": [],
+    "exampleResponse": {
+      "comments": {
+        "comment_id": "Number",
+        "author": "String",
+        "body": "String",
+        "created_at": "String",
+        "votes": "Number"
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": " Posts a new comment to comments table and returns a object representing the new comment.",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": "Number",
+        "author": "String",
+        "body": "String",
+        "created_at": "String",
+        "votes": "Number",
+        "article_id": "Number"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment from the database by comment_id.",
+    "queries": []
   }
 }

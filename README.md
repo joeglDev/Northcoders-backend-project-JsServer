@@ -16,7 +16,22 @@ To set up this project's environment:
 
 ## Endpoints
 
-1. `GET /api/topics` - Returns a response object of news topics.
+1. `GET /api` - Returns a response object representing al api endpoints with endpoint information on a key of the endpoint path.
+
+```
+{
+  api_endpoints : {
+    'PATH, String: {
+          description: String,
+          queries: Array,
+          exampleResponse: Object
+        },
+
+}
+
+```
+
+2. `GET /api/topics` - Returns a response object of news topics.
 
 ```
 {
@@ -26,7 +41,7 @@ To set up this project's environment:
       }
 ```
 
-2. `GET /api/articles/:article_id` - Returns a response object with a article object of a given article_id.
+3. `GET /api/articles/:article_id` - Returns a response object with a article object of a given article_id.
 
 ```
  {
@@ -44,7 +59,7 @@ To set up this project's environment:
       }
 ```
 
-3. `PATCH /api/articles/:article_id` - Returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.
+4. `PATCH /api/articles/:article_id` - Returns a response object with a article object of a given article_id updating the votes key to add the value of the request body supplied.
 
 ```
  {
@@ -62,7 +77,7 @@ To set up this project's environment:
       }
 ```
 
-4. `GET /api/users` - Returns an object with a array of objects representing users on key of users.
+5. `GET /api/users` - Returns an object with a array of objects representing users on key of users.
 
 ```
 {
@@ -76,9 +91,9 @@ To set up this project's environment:
 }
 ```
 
-5. `GET /api/articles` - Returns an object with an array of objects representing articles on key of articles.
+6. `GET /api/articles` - Returns an object with an array of objects representing articles on key of articles.
 
-### Queries 
+### Queries
 
 - ?sort_by=:sort_by : Sorts by a specific table column. Default = created_at
 - ?order=:order : Specifies sort in a paticular order. Default = DESC
@@ -92,7 +107,7 @@ To set up this project's environment:
           title: String,
           topic: String,
           author: String,,
-          created_at: String,,
+          created_at: String,
           votes: Number,
           comment_count: Number
         }
@@ -101,37 +116,39 @@ To set up this project's environment:
 }
 ```
 
-6. `GET /api/articles/:article_id/comments` - Returns a array of objects representing the comments on a specific article on a key of comments.
+7. `GET /api/articles/:article_id/comments` - Returns a array of objects representing the comments on a specific article on a key of comments.
 
 ```
 {
   comments :
   [
     {
-      comment_id : Number
-      author : String
-      body : String
-      created_at : String
+      comment_id : Number,
+      author : String,
+      body : String,
+      created_at : String,
       votes : Number
     },
   ]
 }
 ```
 
-7. `POST /api/articles/:article_id/comments` - Posts a new comment to comments table and returns a object representing the a new comment posted to a specific article.
+8. `POST /api/articles/:article_id/comments` - Posts a new comment to comments table and returns a object representing the a new comment posted to a specific article.
+
 ```
 {
   comment :
-  
+
     {
-      comment_id : Number
-      author : String
-      body : String
-      created_at : String
+      comment_id : Number,
+      author : String,
+      body : String,
+      created_at : String,
       votes : Number,
       article_id : Number
     },
-  
+
 }
 ```
-8. `DELETE /api/comments/:comment_id` - Deletes a comment from database by comment_id.
+
+9. `DELETE /api/comments/:comment_id` - Deletes a comment from database by comment_id.

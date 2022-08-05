@@ -203,83 +203,88 @@ describe(Endpoints.ALL_ARTICLES_END, () => {
 });
 
 describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
-//tests for sorting by query strings
-test('sort_by - returns objects sorted by valid column- default = created_at',() => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "")
-  .expect(200)
-  .then(({ body: rows }) => {
-    const articles = rows.articles;
-    expect(articles).toBeSorted({ key: "created_at", descending: true })
-});
-});
-test('sort_by - returns objects sorted by valid column',() => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=author")
-  .expect(200)
-  .then(({ body: rows }) => {
-    const articles = rows.articles;
-    expect(articles).toBeSorted({ key: "author", descending: true })
-});
-});
+  //tests for sorting by query strings
+  test("sort_by - returns objects sorted by valid column- default = created_at", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "")
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "created_at", descending: true });
+      });
+  });
+  test("sort_by - returns objects sorted by valid column", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "?sort_by=author")
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "author", descending: true });
+      });
+  });
 
-test('order - returns objects sorted by valid column and a specified order, default = desc',() => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id")
-  .expect(200)
-  .then(({ body: rows }) => {
-    const articles = rows.articles;
-    expect(articles).toBeSorted({ key: "article_id", descending: true })
-});
-});
-test('order - returns objects sorted by valid column and a specified order',() => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc")
-  .expect(200)
-  .then(({ body: rows }) => {
-    const articles = rows.articles;
-    expect(articles).toBeSorted({ key: "article_id", descending: false })
-});
-});
-test('topic - filters articles by article topic column', () => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=cats")
-  .expect(200)
-  .then(({ body: rows }) => {
-    
-    const articles = rows.articles;
-    expect(articles).toBeSorted({ key: "article_id", descending: false });
-    expect(articles.length).toBe(1);
-    expect(articles[0].topic).toBe('cats');
-   
-})
-});
+  test("order - returns objects sorted by valid column and a specified order, default = desc", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id")
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "article_id", descending: true });
+      });
+  });
+  test("order - returns objects sorted by valid column and a specified order", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "article_id", descending: false });
+      });
+  });
+  test("topic - filters articles by article topic column", () => {
+    return request(app)
+      .get(
+        Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=cats"
+      )
+      .expect(200)
+      .then(({ body: rows }) => {
+        const articles = rows.articles;
+        expect(articles).toBeSorted({ key: "article_id", descending: false });
+        expect(articles.length).toBe(1);
+        expect(articles[0].topic).toBe("cats");
+      });
+  });
 
-test('returns error 404 if no articles found for a topic and topic is valid', () => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=invalid")
-  .expect(404)
-  .then(({body : error}) => {
-    expect(error.msg).toBe('Error 404: No articles found for topic invalid.')
-  })
+  test("returns error 404 if no articles found for a topic and topic is valid", () => {
+    return request(app)
+      .get(
+        Endpoints.ALL_ARTICLES_END +
+          "?sort_by=article_id&order=asc&topic=invalid"
+      )
+      .expect(404)
+      .then(({ body: error }) => {
+        expect(error.msg).toBe(
+          "Error 404: No articles found for topic invalid."
+        );
+      });
+  });
+  test("returns error 400 bad request if sort_by not valid", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "?sort_by=invalid")
+      .expect(400)
+      .then(({ body: error }) => {
+        expect(error.msg).toBe("Error 400: Invalid query parameter.");
+      });
+  });
+  test("returns error 400 bad request if order not valid", () => {
+    return request(app)
+      .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=invalid")
+      .expect(400)
+      .then(({ body: error }) => {
+        expect(error.msg).toBe("Error 400: Invalid query parameter.");
+      });
+  });
 });
-test('returns error 400 bad request if sort_by not valid', () => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=invalid")
-  .expect(400)
-  .then(({body : error}) => {
-    expect(error.msg).toBe('Error 400: Invalid query paramater.')
-});
-});
-test('returns error 400 bad request if order not valid', () => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=invalid")
-  .expect(400)
-  .then(({body : error}) => {
-    expect(error.msg).toBe('Error 400: Invalid query paramater.')
-});
-});
-})
 
 // tests for GET /api/articles/:article_id/comments
 describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
@@ -350,8 +355,7 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
       .post("/api/articles/1/comments")
       .send(newComment)
       .expect(201)
-      .then(({ body: {comment} }) => {
-       
+      .then(({ body: { comment } }) => {
         expect(comment).toEqual(
           expect.objectContaining({
             comment_id: expect.any(Number),
@@ -359,104 +363,116 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            article_id : expect.any(Number)
+            article_id: expect.any(Number),
           })
         );
       });
   });
   test("returns a http status code of 400 and a error message for if not posted an object with username and body", () => {
     const newComment = {};
-    return request(app) 
-    .post("/api/articles/1/comments")
+    return request(app)
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(400)
-      .then(({ body: err}) => {
-        expect(err.msg).toBe("Error 400: Malformed request body.")
-  })
-});
-test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
-  const newComment = {body : "Test"};
-  return request(app) 
-  .post("/api/articles/1/comments")
-    .send(newComment)
-    .expect(400)
-    .then(({ body: err}) => {
-      expect(err.msg).toBe("Error 400: Malformed request body.")
-})
-});
-test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
-  const newComment = {username : undefined, body : "Test"};
-  return request(app) 
-  .post("/api/articles/1/comments")
-    .send(newComment)
-    .expect(400)
-    .then(({ body: err}) => {
-      expect(err.msg).toBe("Error 400: Malformed request body.")
-})
-});
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 400: Malformed request body.");
+      });
+  });
+  test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+    const newComment = { body: "Test" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 400: Malformed request body.");
+      });
+  });
+  test("returns a http status code of 400 and a error message for if not posted an object with username ", () => {
+    const newComment = { username: undefined, body: "Test" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 400: Malformed request body.");
+      });
+  });
 
-test("returns a status code of 404 and an error message if sent a article id which does not exist", () => {
-  const newComment = { username: "hiroji", body: "merp!" };
+  test("returns a status code of 404 and an error message if sent a article id which does not exist", () => {
+    const newComment = { username: "hiroji", body: "merp!" };
     return request(app)
       .post("/api/articles/9999/comments")
       .send(newComment)
       .expect(404)
-      .then(({ body: err}) => {
-        expect(err.msg).toBe('Error 404: No articles found for article_id 9999.')
+      .then(({ body: err }) => {
+        expect(err.msg).toBe(
+          "Error 404: No articles found for article_id 9999."
+        );
       });
-});
-test("returns a status code of 400 and an error message if sent a article id which is invalid", () => {
-  const newComment = { username: "hiroji", body: "merp!" };
+  });
+  test("returns a status code of 400 and an error message if sent a article id which is invalid", () => {
+    const newComment = { username: "hiroji", body: "merp!" };
     return request(app)
       .post("/api/articles/invalidid/comments")
       .send(newComment)
       .expect(400)
-      .then(({ body: err}) => {
-        expect(err.msg).toBe("Error 400: Not a valid id.")
-      })
-});
-test("returns posted comment and http status code of 201 for existing user", () => {
-  const newComment = { username: "lurker", body: "TEST" };
-  return request(app)
-    .post("/api/articles/1/comments")
-    .send(newComment)
-    .expect(201)
-    .then(({ body: {comment} }) => {
-     
-      expect(comment).toEqual(
-        expect.objectContaining({
-          comment_id: expect.any(Number),
-          author: expect.any(String),
-          body: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_id : expect.any(Number)
-        })
-      );
-    });
-});
-
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 400: Not a valid id.");
+      });
+  });
+  test("returns posted comment and http status code of 201 for existing user", () => {
+    const newComment = { username: "lurker", body: "TEST" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_id: expect.any(Number),
+          })
+        );
+      });
+  });
 });
 
 //tests for DELETE /api/comments/:comment_id
 describe(Endpoints.COMMENT_BY_COMMENT_ID, () => {
   test("deletes comment and returns http status code 204", () => {
-    return request(app).delete("/api/comments/1")
-    .expect(204)
+    return request(app).delete("/api/comments/1").expect(204);
   });
   test("returns http error code 404 and message for comment_id not found", () => {
-    return request(app).delete("/api/comments/999")
-    .expect(404)
-    .then(({body : err}) => {
-      expect(err.msg).toBe('Error 404: No comment found for comment_id 999.')
-    });
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 404: No comment found for comment_id 999.");
+      });
   });
   test("returns http error code 400 and message for comment_id invalid", () => {
-    return request(app).delete("/api/comments/invalid")
-    .expect(400)
-    .then(({body : err}) => {
-      expect(err.msg).toBe('Error 400: Not a valid id.')
-    });
+    return request(app)
+      .delete("/api/comments/invalid")
+      .expect(400)
+      .then(({ body: err }) => {
+        expect(err.msg).toBe("Error 400: Not a valid id.");
+      });
+  });
+});
+
+describe(Endpoints.ALL_ENDPOINTS, () => {
+  test("returns an object on key of api_endpoints representing all endponts", () => {
+    return request(app)
+      .get(Endpoints.ALL_ENDPOINTS)
+      .expect(200)
+      .then(({ body: endpoints }) => {
+        expect(Object.keys(endpoints.api_endpoints).length).toBe(9);
+      });
   });
 });
 
