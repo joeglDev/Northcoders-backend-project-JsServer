@@ -10,7 +10,6 @@
     "seed:prod": "NODE_ENV=development DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
     "test": "npm run setup-dbs && npm run seed && jest",
     "prepare": "husky install"
-    
   },
   "repository": {
     "type": "git",
