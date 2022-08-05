@@ -1,3 +1,5 @@
+const app = require(`${__dirname}/app.js`);
+
 //Listener
 const { PORT = 9090 } = process.env;
 
