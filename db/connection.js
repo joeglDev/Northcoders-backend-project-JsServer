@@ -11,7 +11,7 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
 }
 //note for testing have coded package-json script to run dev environment not production
 const config =
-  ENV === 'development'
+  ENV === 'production'
     ? {
         connectionString: process.env.DATABASE_URL,
         ssl: {
