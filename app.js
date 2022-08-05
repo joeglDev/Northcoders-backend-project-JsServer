@@ -13,7 +13,7 @@ const {
   getCommentsByArticleId,
   postCommentsByArticleId,
   deleteCommentById,
-  getApi
+  getApi,
 } = require(`${__dirname}/controllers/controllers.js`);
 
 const {
@@ -21,8 +21,6 @@ const {
   handleCustomErrors,
   handlePsqlErrors,
 } = require(`${__dirname}/errors.js`);
-
-
 
 //middleware
 app.use(express.json());
@@ -43,8 +41,6 @@ app.get("*", handleInvalidPaths);
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
 
-// //Listener
-// app.listen(port, () => {
-// console.log(`Server listening on port ${port}.`)
-// });
-//const port = 9090;
+
+
+
