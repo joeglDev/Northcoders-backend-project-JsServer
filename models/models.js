@@ -206,5 +206,14 @@ const insertUser = (username) => {
 };
 
 module.exports.deleteComment = (id) => {
-  return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [id]);
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [id])
+    .then(({ rows: comment }) => {
+      if (comment.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Error 404: No comment found for comment_id ${id}.`,
+        });
+      }
+    });
 };

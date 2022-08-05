@@ -444,6 +444,20 @@ describe(Endpoints.COMMENT_BY_COMMENT_ID, () => {
     return request(app).delete("/api/comments/1")
     .expect(204)
   });
+  test("returns http error code 404 and message for comment_id not found", () => {
+    return request(app).delete("/api/comments/999")
+    .expect(404)
+    .then(({body : err}) => {
+      expect(err.msg).toBe('Error 404: No comment found for comment_id 999.')
+    });
+  });
+  test("returns http error code 400 and message for comment_id invalid", () => {
+    return request(app).delete("/api/comments/invalid")
+    .expect(400)
+    .then(({body : err}) => {
+      expect(err.msg).toBe('Error 400: Not a valid id.')
+    });
+  });
 });
 
 //close connection to database

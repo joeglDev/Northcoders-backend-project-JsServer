@@ -110,7 +110,9 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
 
 module.exports.deleteCommentById = (req, res, next) => {
   const id = req.params.comment_id;
-  deleteComment(id).then(() => {
-    res.status(204).send();
-  });
+  deleteComment(id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
 };
