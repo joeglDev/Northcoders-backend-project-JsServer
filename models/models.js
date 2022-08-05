@@ -53,42 +53,36 @@ module.exports.selectAllUsers = () => {
   });
 };
 
+//guards against sql injection attacks
+//checks queries against allowed values and if valid inserts into sql statement
+// topic defaults -> 1=1 -> true therefore where true if not specified
 module.exports.selectAllArticles = (
   sort_by = "created_at",
   order = "DESC",
-  topic = '1=1',
-  next
+  topic = "1=1"
 ) => {
-  //edit topic for insert, default 1=1 -> true hence returns all
-  //check topic does not include SQL statements, can't use $1 for booleans
+  //gets list of article topics and uses to determine if injected topic is valid
+  return (
+    helperGetTopics()
+      .then((topics) => {
+        return topics;
+      })
+      .then((topics) => {
+        const topicArr = topics.map((obj) => {
+          return obj.topic;
+        });
 
-  //WHERE CLAUSE may need refactoring for protection against sql injections
+        //topic = default -> pass
+        //topic = invalid -> throw error
+        //else topic is valid AND not default -> prepare sql statement
+        if (topic === "1=1") {
+        } else if (topicArr.includes(topic) === false) {
+          throw new Error("403-bad-sql-query");
+        } else {
+          topic = `topic = '${topic}'`;
+        }
 
-  //call helper func
-  //check agaisnt topics
-  //if not found reject
-  //get topic in correct format
-  return helperGetTopics()
-    .then((topicArr) => {
-      return topicArr;
-    })
-    .then((topicArr) => { //issue topic does not have quotes
-      const topics = topicArr.map((obj) => {
-        return obj.topic;
-      });
-
-      
-      if (topic === '1=1') {console.log("topic = default")}
-      else if((topics.includes(topic) === false))  {
-
-        throw new Error("403-bad-sql-query");
-      }
-      if (topic !== "1=1") {
-        topic = `topic = '${topic}'`
-      }
-
-      //create query
-      let sqlQuery = `SELECT articles.article_id,
+        let sqlQuery = `SELECT articles.article_id,
 articles.title,
 articles.topic,
 articles.author,
@@ -100,38 +94,39 @@ ON articles.article_id = comments.article_id
 WHERE ${topic}
 GROUP BY articles.article_id`;
 
+        //check urlqueries  sort_by, order are valid
+        const validSorts = [
+          "title",
+          "topic",
+          "author",
+          "created_at",
+          "votes",
+          "article_id",
+          "comment_count",
+        ];
+        const validOrders = ["ASC", "DESC"];
 
-
-      //check urlqueries are valid
-      const validSorts = [
-        "title",
-        "topic",
-        "author",
-        "created_at",
-        "votes",
-        "article_id",
-        "comment_count",
-      ];
-      const validOrders = ["ASC", "DESC"];
-
-      //if valid add to query statement
-      if (validSorts.includes(sort_by)) {
-        sqlQuery += ` ORDER BY articles.${sort_by}`;
-        if (validOrders.includes(order)) {
-          sqlQuery += ` ${order};`;
+        //if valid add to query statement
+        if (validSorts.includes(sort_by)) {
+          sqlQuery += ` ORDER BY articles.${sort_by}`;
+          if (validOrders.includes(order)) {
+            sqlQuery += ` ${order};`;
+          }
         }
-      }
 
-      return db.query(sqlQuery).then(({ rows: articles }) => {
-
-        return articles;
-      });
-    })
-    .catch((err) => {
-      return Promise.reject(err)
-    })
+        //database query to get articles
+        return db.query(sqlQuery).then(({ rows: articles }) => {
+          return articles;
+        });
+      })
+      //reject bad sql statements
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+  );
 };
 
+//aids selection of valid topics from GET /api/articles?
 const helperGetTopics = () => {
   return db.query("SELECT topic FROM articles;").then(({ rows: topics }) => {
     return topics;
