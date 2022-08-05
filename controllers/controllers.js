@@ -10,6 +10,7 @@ const {
 } = require(`${__dirname}/../models/models.js`);
 const checkIdExists = require(`${__dirname}/../utils`);
 
+
 module.exports.getAllTopics = (req, res) => {
   //invokes model
   selectAllTopics().then((topics) => {
@@ -115,4 +116,12 @@ module.exports.deleteCommentById = (req, res, next) => {
       res.status(204).send();
     })
     .catch(next);
+};
+
+//not using MVC layouout as can grab data by exporting from a file in one line.
+module.exports.getApi = (req, res) => {
+  const endpoints = require(`${__dirname}/../endpoints.json`);
+  const responseBody = {api_endpoints : endpoints}
+  res.status(200).send(responseBody)
+
 };
