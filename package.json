@@ -4,7 +4,7 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "scripts": {
-    "start-local": "npm run seed && node listen.js",
+    "start-local": "node listen.js",
     "start": "npm run seed:prod && node listen.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
