@@ -257,13 +257,13 @@ test('topic - filters articles by article topic column', () => {
 test('topic - protects against sql injection', () => {
   return request(app)
   .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=DROP*TABLES")
-  .expect(403)
+  .expect(400)
 });
 //400 might be better
 test('rejects an invalid topic', () => {
   return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=invalidtopic")
-  .expect(403)
+  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=invalid")
+  .expect(400)
 });
 });
 

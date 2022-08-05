@@ -77,7 +77,7 @@ module.exports.selectAllArticles = (
         //else topic is valid AND not default -> prepare sql statement
         if (topic === "1=1") {
         } else if (topicArr.includes(topic) === false) {
-          throw new Error("403-bad-sql-query");
+          throw new Error("400-bad-sql-query");
         } else {
           topic = `topic = '${topic}'`;
         }
