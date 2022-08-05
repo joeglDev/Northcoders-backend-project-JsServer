@@ -118,7 +118,7 @@ module.exports.deleteCommentById = (req, res, next) => {
     .catch(next);
 };
 
-//not using MVC layouout as can grab data by exporting from a file in one line.
+//not using MVC layouout as can grab data by exporting from a file in one line
 //use file system
 module.exports.getApi = (req, res) => {
   const endpoints = require(`${__dirname}/../endpoints.json`);
