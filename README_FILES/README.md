@@ -134,3 +134,4 @@ To set up this project's environment:
   
 }
 ```
+8. `DELETE /api/comments/:comment_id` - Deletes a comment from database by comment_id.

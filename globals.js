@@ -5,6 +5,7 @@ class Endpoints {
     static ALL_USERS_END = "/api/users";
     static ALL_ARTICLES_END = "/api/articles";
     static ALL_COMMENTS_BY_ARTICLE_ID = "/api/articles/:article_id/comments";
+    static COMMENT_BY_COMMENT_ID = "/api/comments/:comment_id"
 };
 
 

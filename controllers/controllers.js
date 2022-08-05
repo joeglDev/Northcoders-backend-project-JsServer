@@ -6,6 +6,7 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  deleteComment,
 } = require(`${__dirname}/../models/models.js`);
 const checkIdExists = require(`${__dirname}/../utils`);
 
@@ -55,12 +56,13 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getAllArticles = (req, res, next) => {
-  const {sort_by, order, topic} = req.query;
-  selectAllArticles(sort_by, order, topic).then((articles) => {
-    const responseBody = { articles };
-    res.status(200).send(responseBody);
-  })
-  .catch(next)
+  const { sort_by, order, topic } = req.query;
+  selectAllArticles(sort_by, order, topic)
+    .then((articles) => {
+      const responseBody = { articles };
+      res.status(200).send(responseBody);
+    })
+    .catch(next);
 };
 
 /*
@@ -102,6 +104,15 @@ module.exports.postCommentsByArticleId = (req, res, next) => {
     .then(([comment]) => {
       const responseBody = { comment };
       res.status(201).send(responseBody);
+    })
+    .catch(next);
+};
+
+module.exports.deleteCommentById = (req, res, next) => {
+  const id = req.params.comment_id;
+  deleteComment(id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

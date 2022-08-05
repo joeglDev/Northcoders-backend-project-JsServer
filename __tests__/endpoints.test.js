@@ -174,13 +174,13 @@ describe(Endpoints.ALL_ARTICLES_END, () => {
       });
   });
   //test is britte as depends on sort order foreach, get index of date = x then look at this one
-  test.skip("articles with 0 comments return a value of 0 on comment_count", () => {
+  test("articles with 0 comments return a value of 0 on comment_count", () => {
     return request(app)
       .get(Endpoints.ALL_ARTICLES_END)
       .expect(200)
       .then(({ body: rows }) => {
         const articles = rows.articles;
-        expect(articles[0].comment_count).toBe(0);
+        expect(articles[2].comment_count).toBe(0);
       });
   });
   test("returned array is sorted by object key: created_at in descending date", () => {
@@ -436,6 +436,28 @@ test("returns posted comment and http status code of 201 for existing user", () 
     });
 });
 
+});
+
+//tests for DELETE /api/comments/:comment_id
+describe(Endpoints.COMMENT_BY_COMMENT_ID, () => {
+  test("deletes comment and returns http status code 204", () => {
+    return request(app).delete("/api/comments/1")
+    .expect(204)
+  });
+  test("returns http error code 404 and message for comment_id not found", () => {
+    return request(app).delete("/api/comments/999")
+    .expect(404)
+    .then(({body : err}) => {
+      expect(err.msg).toBe('Error 404: No comment found for comment_id 999.')
+    });
+  });
+  test("returns http error code 400 and message for comment_id invalid", () => {
+    return request(app).delete("/api/comments/invalid")
+    .expect(400)
+    .then(({body : err}) => {
+      expect(err.msg).toBe('Error 400: Not a valid id.')
+    });
+  });
 });
 
 //close connection to database
