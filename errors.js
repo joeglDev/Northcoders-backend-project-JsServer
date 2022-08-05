@@ -25,7 +25,7 @@ const responseBody = {status: 400, msg : "Error 400: Malformed request body."}
   }
   //400 bad request - invalid query string
   else if (err === "400-invalid-query") {
-    const responseBody = {status : 400, msg : 'Error 400: Invalid query paramater.'};
+    const responseBody = {status : 400, msg : 'Error 400: Invalid query parameter.'};
     res.status(400).send(responseBody)
   }
   

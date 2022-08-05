@@ -273,7 +273,7 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
       .get(Endpoints.ALL_ARTICLES_END + "?sort_by=invalid")
       .expect(400)
       .then(({ body: error }) => {
-        expect(error.msg).toBe("Error 400: Invalid query paramater.");
+        expect(error.msg).toBe("Error 400: Invalid query parameter.");
       });
   });
   test("returns error 400 bad request if order not valid", () => {
@@ -281,7 +281,7 @@ describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {
       .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=invalid")
       .expect(400)
       .then(({ body: error }) => {
-        expect(error.msg).toBe("Error 400: Invalid query paramater.");
+        expect(error.msg).toBe("Error 400: Invalid query parameter.");
       });
   });
 });
