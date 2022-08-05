@@ -254,16 +254,14 @@ test('topic - filters articles by article topic column', () => {
    
 })
 });
-test('topic - protects against sql injection', () => {
-  return request(app)
-  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=DROP*TABLES")
-  .expect(400)
-});
-//400 might be better
-test('rejects an invalid topic', () => {
+
+test('returns error 404 if no articles found for a topic and topic is valid', () => {
   return request(app)
   .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=asc&topic=invalid")
-  .expect(400)
+  .expect(404)
+  .then(({body : error}) => {
+    expect(error.msg).toBe('Error 404: No articles found for topic invalid.')
+  })
 });
 });
 

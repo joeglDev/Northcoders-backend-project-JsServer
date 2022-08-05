@@ -61,32 +61,12 @@ module.exports.selectAllArticles = (
   order = "DESC",
   topic
 ) => {
-  //gets list of article topics and uses to determine if injected topic is valid
-  return (
-    helperGetTopics()
-      .then((topics) => {
-        return topics;
-      })
-      .then((topics) => {
-        const topicArr = topics.map((obj) => {
-          return obj.topic;
-        });
-
-        //topic = default -> pass
-        //topic = invalid -> throw error
-        //else topic is valid AND not default -> prepare sql statement
-        if (topic) {
-          if (topicArr.includes(topic) === false) {
-            throw new Error("400-bad-sql-query");
-          }
-        }
-
-        //LOGIC BIFURCATES
-        //1. topic = undefined -> run sqlquery
-        //2. topic -> insert into prepared
-        let sqlQuery;
-        if (topic) {
-          sqlQuery = `SELECT articles.article_id,
+  //LOGIC BIFURCATES
+  //1. topic = undefined -> run sqlquery
+  //2. topic -> insert into prepared
+  let sqlQuery;
+  if (topic) {
+    sqlQuery = `SELECT articles.article_id,
           articles.title,
           articles.topic,
           articles.author,
@@ -97,8 +77,8 @@ module.exports.selectAllArticles = (
           ON articles.article_id = comments.article_id
           WHERE topic = $1
           GROUP BY articles.article_id`;
-        } else {
-          sqlQuery = `SELECT articles.article_id,
+  } else {
+    sqlQuery = `SELECT articles.article_id,
           articles.title,
           articles.topic,
           articles.author,
@@ -108,45 +88,46 @@ module.exports.selectAllArticles = (
           LEFT OUTER JOIN comments
           ON articles.article_id = comments.article_id
           GROUP BY articles.article_id`;
-        }
+  }
 
-        //check urlqueries  sort_by, order are valid
-        const validSorts = [
-          "title",
-          "topic",
-          "author",
-          "created_at",
-          "votes",
-          "article_id",
-          "comment_count",
-        ];
-        const validOrders = ["ASC", "DESC", "asc", "desc"];
+  //check urlqueries  sort_by, order are valid
+  const validSorts = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_id",
+    "comment_count",
+  ];
+  const validOrders = ["ASC", "DESC", "asc", "desc"];
 
-        //if valid add to query statement
-        if (validSorts.includes(sort_by)) {
-          sqlQuery += ` ORDER BY articles.${sort_by}`;
-          if (validOrders.includes(order)) {
-            sqlQuery += ` ${order};`;
-          }
-        }
-
-        //database query to get articles
-        if (!topic) {
-          return db.query(sqlQuery).then(({ rows: articles }) => {
-            return articles;
-          });
-        } else {
-          return db.query(sqlQuery, [topic]).then(({ rows: articles }) => {
-            return articles;
-          });
-        }
-      })
-      //reject bad sql statements
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-  );
+  //if valid add to query statement
+  if (validSorts.includes(sort_by)) {
+    sqlQuery += ` ORDER BY articles.${sort_by}`;
+    if (validOrders.includes(order)) {
+      sqlQuery += ` ${order};`;
+    }
+  }
+  //database query to get articles
+  if (!topic) {
+    return db.query(sqlQuery).then(({ rows: articles }) => {
+      return articles;
+    });
+  } else {
+    return db.query(sqlQuery, [topic]).then(({ rows: articles }) => {
+      //if no articles found check if topic is present
+      if (articles.length === 0) {
+       return checkIdExists("articles", "topic", topic).catch((err) => {
+          return Promise.reject(err);
+        });
+      }
+      return articles;
+    });
+  }
 };
+//reject bad sql statements
+//
 
 //aids selection of valid topics from GET /api/articles?
 const helperGetTopics = () => {
