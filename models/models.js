@@ -53,29 +53,96 @@ module.exports.selectAllUsers = () => {
   });
 };
 
-module.exports.selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.article_id,
-  articles.title,
-  articles.topic,
-  articles.author,
-  articles.created_at,
-  articles.votes,
-  CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
-  LEFT OUTER JOIN comments
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`
-    )
-    .then(({ rows: articles }) => {
+//guards against sql injection attacks
+//checks queries against allowed values and if valid inserts into sql statement
+// topic defaults -> 1=1 -> true therefore where true if not specified
+module.exports.selectAllArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  topic
+) => {
+  //LOGIC BIFURCATES
+  //1. topic = undefined -> run sqlquery
+  //2. topic -> insert into prepared
+  let sqlQuery;
+  if (topic) {
+    sqlQuery = `SELECT articles.article_id,
+          articles.title,
+          articles.topic,
+          articles.author,
+          articles.created_at,
+          articles.votes,
+          CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
+          LEFT OUTER JOIN comments
+          ON articles.article_id = comments.article_id
+          WHERE topic = $1
+          GROUP BY articles.article_id`;
+  } else {
+    sqlQuery = `SELECT articles.article_id,
+          articles.title,
+          articles.topic,
+          articles.author,
+          articles.created_at,
+          articles.votes,
+          CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
+          LEFT OUTER JOIN comments
+          ON articles.article_id = comments.article_id
+          GROUP BY articles.article_id`;
+  }
+
+  //check urlqueries  sort_by, order are valid
+  const validSorts = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_id",
+    "comment_count",
+  ];
+  const validOrders = ["ASC", "DESC", "asc", "desc"];
+
+  //else throw new error
+  //if valid add to query statement
+  if (validSorts.includes(sort_by)) {
+    sqlQuery += ` ORDER BY articles.${sort_by}`;
+    if (validOrders.includes(order)) {
+      sqlQuery += ` ${order};`;
+    } else {
+      return Promise.reject("400-invalid-query");
+    }
+  } else {
+    return Promise.reject("400-invalid-query");
+  }
+
+  //database query to get articles
+  if (!topic) {
+    return db.query(sqlQuery).then(({ rows: articles }) => {
       return articles;
     });
+  } else {
+    return db.query(sqlQuery, [topic]).then(({ rows: articles }) => {
+      //if no articles found check if topic is present
+      if (articles.length === 0) {
+        return checkIdExists("articles", "topic", topic).catch((err) => {
+          return Promise.reject(err);
+        });
+      }
+      return articles;
+    });
+  }
+};
+//reject bad sql statements
+//
+
+//aids selection of valid topics from GET /api/articles?
+const helperGetTopics = () => {
+  return db.query("SELECT topic FROM articles;").then(({ rows: topics }) => {
+    return topics;
+  });
 };
 
 module.exports.selectCommentsByArticleId = (id) => {
-
-  
   return db
     .query(
       `SELECT comment_id, 
@@ -93,16 +160,11 @@ module.exports.selectCommentsByArticleId = (id) => {
       } else {
         return comments;
       }
-    })
-   
+    });
 };
 
 //requires helper function to insert new username FK into user table
 module.exports.insertCommentByArticleId = (id, username, body) => {
-
-  
-
-
   const currentDate = new Date();
   const newComment = {
     author: username,
@@ -130,21 +192,24 @@ VALUES
       );
     })
 
-    .then(({rows : comment}) => {
-      return comment
+    .then(({ rows: comment }) => {
+      return comment;
     });
 };
 
 const insertUser = (username) => {
-  return db.query(
-    ` 
+  return (
+    db
+      .query(
+        ` 
   INSERT INTO users (username, name) VALUES ($1, $2);`,
-    [username, 'PLACEHOLDER']
-  )
-  //catch PSQL errors resulting from duplicate username PRIMARY KEY
-  .catch((err) => {
-    if (err.code === '23505') {return Promise.resolve()}
-  })
+        [username, "PLACEHOLDER"]
+      )
+      //catch PSQL errors resulting from duplicate username PRIMARY KEY
+      .catch((err) => {
+        if (err.code === "23505") {
+          return Promise.resolve();
+        }
+      })
+  );
 };
-
-

@@ -78,6 +78,12 @@ To set up this project's environment:
 
 5. `GET /api/articles` - Returns an object with an array of objects representing articles on key of articles.
 
+### Queries 
+
+- ?sort_by=:sort_by : Sorts by a specific table column. Default = created_at
+- ?order=:order : Specifies sort in a paticular order. Default = DESC
+- ?topic=:topic : Filteres returned results by a specific article topic.
+
 ```
 {
   articles : [

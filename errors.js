@@ -18,6 +18,17 @@ const responseBody = {status: 400, msg : "Error 400: Malformed request body."}
     const responseBody = {status: 400, msg :  "Error 400: Body has invalid data type."}
     res.status(400).send(responseBody)
   }
+  //403 Forbidden - bad sql query
+  else if(err.message === "400-bad-sql-query") {
+    const responseBody = { status: 400, msg: "Error 400: Inavalid query value" };
+    res.status(400).send(responseBody)
+  }
+  //400 bad request - invalid query string
+  else if (err === "400-invalid-query") {
+    const responseBody = {status : 400, msg : 'Error 400: Invalid query paramater.'};
+    res.status(400).send(responseBody)
+  }
+  
   else {
     next(err);
   }

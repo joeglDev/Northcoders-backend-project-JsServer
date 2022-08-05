@@ -9,7 +9,7 @@ module.exports = checkIdExists = (table, column, value) => {
     if (rows.length === 0) {
       return Promise.reject({
         status: 404,
-        msg: `Error 404: No articles found for article_id ${value}.`,
+        msg: `Error 404: No articles found for ${column} ${value}.`,
       });
     } else {
       return true;
