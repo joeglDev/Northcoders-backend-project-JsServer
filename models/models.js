@@ -59,7 +59,7 @@ module.exports.selectAllUsers = () => {
 module.exports.selectAllArticles = (
   sort_by = "created_at",
   order = "DESC",
-  topic = "1=1"
+  topic 
 ) => {
   //gets list of article topics and uses to determine if injected topic is valid
   return (
@@ -75,24 +75,41 @@ module.exports.selectAllArticles = (
         //topic = default -> pass
         //topic = invalid -> throw error
         //else topic is valid AND not default -> prepare sql statement
-        if (topic === "1=1") {
-        } else if (topicArr.includes(topic) === false) {
-          throw new Error("400-bad-sql-query");
-        } else {
-          topic = `topic = '${topic}'`;
-        }
+        if (topic) {
+          if (topicArr.includes(topic) === false) {
+            throw new Error("400-bad-sql-query");
+          } 
+        }  
 
-        let sqlQuery = `SELECT articles.article_id,
-articles.title,
-articles.topic,
-articles.author,
-articles.created_at,
-articles.votes,
-CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
-LEFT OUTER JOIN comments
-ON articles.article_id = comments.article_id
-WHERE ${topic}
-GROUP BY articles.article_id`;
+        //do not template in where if undefined
+        let sqlQuery;
+        if (topic) {
+          sqlQuery = `SELECT articles.article_id,
+          articles.title,
+          articles.topic,
+          articles.author,
+          articles.created_at,
+          articles.votes,
+          CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
+          LEFT OUTER JOIN comments
+          ON articles.article_id = comments.article_id
+          WHERE topic = '${topic}'
+          GROUP BY articles.article_id`
+        } else {
+          sqlQuery = 
+          `SELECT articles.article_id,
+          articles.title,
+          articles.topic,
+          articles.author,
+          articles.created_at,
+          articles.votes,
+          CAST(COUNT(comments.article_id) AS INT) AS comment_count FROM articles
+          LEFT OUTER JOIN comments
+          ON articles.article_id = comments.article_id
+          GROUP BY articles.article_id`
+        };
+
+       
 
         //check urlqueries  sort_by, order are valid
         const validSorts = [
@@ -104,7 +121,7 @@ GROUP BY articles.article_id`;
           "article_id",
           "comment_count",
         ];
-        const validOrders = ["ASC", "DESC"];
+        const validOrders = ["ASC", "DESC", "asc", "desc"];
 
         //if valid add to query statement
         if (validSorts.includes(sort_by)) {
