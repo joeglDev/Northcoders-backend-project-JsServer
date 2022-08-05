@@ -263,8 +263,23 @@ test('returns error 404 if no articles found for a topic and topic is valid', ()
     expect(error.msg).toBe('Error 404: No articles found for topic invalid.')
   })
 });
+test('returns error 400 bad request if sort_by not valid', () => {
+  return request(app)
+  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=invalid")
+  .expect(400)
+  .then(({body : error}) => {
+    expect(error.msg).toBe('Error 400: Invalid query paramater.')
 });
-
+});
+test('returns error 400 bad request if order not valid', () => {
+  return request(app)
+  .get(Endpoints.ALL_ARTICLES_END + "?sort_by=article_id&order=invalid")
+  .expect(400)
+  .then(({body : error}) => {
+    expect(error.msg).toBe('Error 400: Invalid query paramater.')
+});
+});
+})
 
 // tests for GET /api/articles/:article_id/comments
 describe(Endpoints.ALL_COMMENTS_BY_ARTICLE_ID, () => {

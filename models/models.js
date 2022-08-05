@@ -102,13 +102,19 @@ module.exports.selectAllArticles = (
   ];
   const validOrders = ["ASC", "DESC", "asc", "desc"];
 
+  //else throw new error
   //if valid add to query statement
   if (validSorts.includes(sort_by)) {
     sqlQuery += ` ORDER BY articles.${sort_by}`;
     if (validOrders.includes(order)) {
       sqlQuery += ` ${order};`;
+    } else {
+      return Promise.reject("400-invalid-query");
     }
+  } else {
+    return Promise.reject("400-invalid-query");
   }
+
   //database query to get articles
   if (!topic) {
     return db.query(sqlQuery).then(({ rows: articles }) => {
@@ -118,7 +124,7 @@ module.exports.selectAllArticles = (
     return db.query(sqlQuery, [topic]).then(({ rows: articles }) => {
       //if no articles found check if topic is present
       if (articles.length === 0) {
-       return checkIdExists("articles", "topic", topic).catch((err) => {
+        return checkIdExists("articles", "topic", topic).catch((err) => {
           return Promise.reject(err);
         });
       }
