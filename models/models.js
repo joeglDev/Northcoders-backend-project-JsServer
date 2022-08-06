@@ -217,3 +217,16 @@ module.exports.deleteComment = (id) => {
       }
     });
 };
+
+module.exports.readApi = () => {
+  const fs = require("fs/promises");
+  return fs.readFile(`${__dirname}/../endpoints.json`, 'utf8')
+  .then((endpoints) => {
+    return endpoints
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+
+  
+};
