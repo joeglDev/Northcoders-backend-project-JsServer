@@ -12,9 +12,11 @@ const config =
       }
     : {};
 
-require("dotenv").config({
-  path: `${__dirname}/../.env.${ENV}`,
-});
+    if (ENV !== "production") {
+      require("dotenv").config({
+        path: `${__dirname}/../.env.${ENV}`,
+      });
+    }
 
 //note for testing have coded package-json script to run dev environment not production
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
@@ -22,4 +24,4 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
 }
 
 
-module.exports = new Pool();
+module.exports = new Pool(config);
